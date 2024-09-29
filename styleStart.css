@@ -4,3 +4,40 @@
     color: #333;
     text-align: center;
 }
+
+#find-sb {
+    display: block;
+    font-size: 1.5em;
+    color: #333;
+    text-align: center;
+}
+
+#spacebar-container {
+    position: relative;
+    text-align: center;
+}
+
+
+#spacebar {
+    display: block;
+    width: 70vw;
+    height: 75vh;
+    margin: 0 auto;
+}
+
+#arrow {
+    position: absolute;
+    left: 50%;
+    margin: 0 auto;
+    transform: rotate(180deg) translateX(50%);
+    width: 100px;
+    height: auto;
+    animation: bounce 0.5s infinite alternate;
+}
+
+@keyframes bounce {
+        from { top: 750px; }
+        to { top: 720px; }
+    
+}
+
