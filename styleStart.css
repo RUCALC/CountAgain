@@ -35,9 +35,36 @@
     animation: bounce 0.5s infinite alternate;
 }
 
+#message {
+    margin-top: 20px;
+    font-size: 1.5em;
+}
+
 @keyframes bounce {
         from { top: 750px; }
         to { top: 720px; }
     
 }
 
+.smiley {
+    position: absolute;
+    width: 85px;
+    height: 70px;
+    animation: float 2s ease-out;
+    opacity: 0;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0) scale(0); opacity: 0;
+    }
+    10% {
+        transform: translateY(0) scale(1); opacity: 1;
+    }
+    90% {
+        transform: translateY(-100px) scale(1); opacity: 1;
+    }
+    100% {
+        transform: translateY(-120px) scale(1); opacity: 0;
+    }
+}
