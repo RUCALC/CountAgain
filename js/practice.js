@@ -23,7 +23,7 @@ if (practice) {
 
     // create cookies
 
-    const practiceTypes = ['ChocoCookie.png', 'SugarCookie.png'];
+    const practiceTypes = ['/images/ChocoCookie.png', '/images/SugarCookie.png'];
 
     function popCookies(foodTypes) {
         let innerFoods = [];

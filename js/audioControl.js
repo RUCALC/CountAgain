@@ -8,11 +8,11 @@ const audioEnd = document.getElementById('audioEnd');
 
 // trials 2-24 can go into an array to loop thru for better code readability
 
-const audioTrials = ['mp3/3orange.mp3', 'mp3/5strawberry.mp3', 'mp3/2banana.mp3', 'mp3/10orange.mp3', 
-    'mp3/4strawberry.mp3', 'mp3/2banana.mp3', 'mp3/4orange.mp3', 'mp3/1strawberry.mp3', 'mp3/3banana.mp3',
-    'mp3/10orange.mp3', 'mp3/5strawberry.mp3', 'mp3/4banana.mp3', 'mp3/5orange.mp3', 'mp3/1strawberry.mp3',
-    'mp3/3banana.mp3', 'mp3/10orange.mp3', 'mp3/2strawberry.mp3', 'mp3/1banana.mp3', 'mp3/10orange.mp3',
-    'mp3/3strawberry.mp3', 'mp3/2banana.mp3', 'mp3/5orange.mp3', 'mp3/4strawberry.mp3'];
+const audioTrials = ['/mp3/3orange.mp3', '/mp3/5strawberry.mp3', '/mp3/2banana.mp3', '/mp3/10orange.mp3', 
+    '/mp3/4strawberry.mp3', '/mp3/2banana.mp3', '/mp3/4orange.mp3', '/mp3/1strawberry.mp3', '/mp3/3banana.mp3',
+    '/mp3/10orange.mp3', '/mp3/5strawberry.mp3', '/mp3/4banana.mp3', '/mp3/5orange.mp3', '/mp3/1strawberry.mp3',
+    '/mp3/3banana.mp3', '/mp3/10orange.mp3', '/mp3/2strawberry.mp3', '/mp3/1banana.mp3', '/mp3/10orange.mp3',
+    '/mp3/3strawberry.mp3', '/mp3/2banana.mp3', '/mp3/5orange.mp3', '/mp3/4strawberry.mp3'];
 
 
 

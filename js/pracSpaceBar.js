@@ -14,7 +14,7 @@ document.addEventListener('keydown', function(event) {
 
 function createSmiley() {
     const smiley = document.createElement('img');
-    smiley.src = 'clear-relieved-emoji.png';
+    smiley.src = '/images/clear-relieved-emoji.png';
     smiley.alt = 'smiley';
     smiley.className = 'smiley';
     smiley.style.left = `${Math.random() * 80 + 10}%`;
