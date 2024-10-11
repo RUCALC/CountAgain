@@ -1,4 +1,7 @@
 // assign each html audio to a variable 
+const findSpaceBar = document.getElementById('findSpaceBar');
+const pracSpaceBar = document.getElementById('pracSpaceBar');
+const spaceBarTrans = document.getElementById('spaceBarTrans');
 const audioStartPrac = document.getElementById('audioStartPrac');
 const audioPrac1 = document.getElementById('audioPrac1');
 const audioPrac2 = document.getElementById('audioPrac2');
@@ -19,18 +22,36 @@ const audioTrials = ['/mp3/3orange.mp3', '/mp3/5strawberry.mp3', '/mp3/2banana.m
 
 // play the audio as soon as the page loads, commented out for dev
 
-
 window.addEventListener('load', function() {
-   
+    var pageID = document.body.id;
 
-    // play the p1cookie.mp3 audio
-    audioStartPrac.play();
-    audioStartPrac.addEventListener('ended', function() {
-        audioPrac1.play();
+   // check that spacebar phases have been cleared
+    switch(pageID) {
+        case 'spacebar1':  
+            findSpaceBar.play();
+            break;
+        case 'spacebar2':
+            pracSpaceBar.play();
+            break;
+    
+    
+        case 'study':
+            // play transition audio
+            spaceBarTrans.play();
 
-        lastAudio = audioPrac1;
-    });
-    nextPhaseCounter++;
+            spaceBarTrans.addEventListener('ended', function() {
+                // play the p1cookie.mp3 audio
+                audioStartPrac.play();
+                audioStartPrac.addEventListener('ended', function() {
+                audioPrac1.play();
+
+                    lastAudio = audioPrac1;
+                });
+                nextPhaseCounter++;
+            });
+
+        }   
+        
 });
 
 

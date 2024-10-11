@@ -31,3 +31,6 @@ function updateMessage() {
         message.textContent = "Good Job! Keep pressing the spacebar!";
     }
 }
+
+// AUDIO CONTROLS
+
