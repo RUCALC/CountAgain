@@ -73,3 +73,14 @@ button {
     margin-top: 10vh;
     font-size: 1.5em;
 }
+
+
+/* NEUTRAL PAGE EDIT */
+#neutral {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
