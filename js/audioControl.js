@@ -32,23 +32,27 @@ window.addEventListener('load', function() {
             break;
         case 'spacebar2':
             pracSpaceBar.play();
+            break; 
+        case 'neutral':
+            if (spaceBarTrans) {
+                spaceBarTrans.play();
+                spaceBarTrans.addEventListener('ended', function() {
+                    window.location.href = 'index.html';
+                })
+            } else {
+                console.log("spaceBarTrans audio element not found.");
+            }
             break;
     
-    
         case 'study':
-            // play transition audio
-            spaceBarTrans.play();
+            // play the p1cookie.mp3 audio
+            audioStartPrac.play();
+            audioStartPrac.addEventListener('ended', function() {
+            audioPrac1.play();
 
-            spaceBarTrans.addEventListener('ended', function() {
-                // play the p1cookie.mp3 audio
-                audioStartPrac.play();
-                audioStartPrac.addEventListener('ended', function() {
-                audioPrac1.play();
-
-                    lastAudio = audioPrac1;
-                });
-                nextPhaseCounter++;
+                lastAudio = audioPrac1;
             });
+            nextPhaseCounter++;
 
         }   
         
