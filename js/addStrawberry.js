@@ -1,4 +1,4 @@
-const strawberryIMG = 'Strawberry.png'
+const strawberryIMG = '../images/Strawberry.png'
 
 const container = document.getElementById('sb-container')
 

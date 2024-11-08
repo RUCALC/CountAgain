@@ -68,7 +68,7 @@ function popFruits(fruitTypes) {
 
 // *** CHANGE & ADD FRUITS HERE ***
 
-const initFruitTypes = ['/images/Strawberry.png', '/images/Banana.png', '/images/Orange.png'];
+const initFruitTypes = ['../images/Strawberry.png', '../images/Banana.png', '../images/Orange.png'];
 
 let fruits;
 
