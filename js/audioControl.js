@@ -22,7 +22,7 @@ const audioTrials = ['../mp3/3orange.mp3', '../mp3/5strawberry.mp3', '../mp3/2ba
 
 // play the audio as soon as the page loads, commented out for dev
 
-window.addEventListener('load', function() {
+window.addEventListener('click', function() {
     var pageID = document.body.id;
 
    // check that spacebar phases have been cleared
