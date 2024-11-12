@@ -30,19 +30,19 @@
     left: 50%;
     margin: 0 auto;
     transform: rotate(180deg) translateX(50%);
-    width: 100px;
+    width: 80px;
     height: auto;
     animation: bounce 0.5s infinite alternate;
 }
 
 #message {
-    margin-top: 20px;
+    margin-top: 70px;
     font-size: 1.5em;
 }
 
 @keyframes bounce {
-        from { top: 750px; }
-        to { top: 720px; }
+        from { top: 650px; }
+        to { top: 610px; }
     
 }
 
