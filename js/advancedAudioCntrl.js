@@ -21,7 +21,7 @@ class AudioManager {
     constructor() {
         // Configuration for the interaction button
         this.buttonConfig = {
-            text: '🔊 Enable Audio',
+            text: '🔊 Play Instructions',
             styles: {
                 position: 'fixed',
                 top: '20px',
@@ -41,13 +41,7 @@ class AudioManager {
     }
 
     init() {
-        // Only show button if audio hasn't been enabled yet
-        if (!this.isAudioEnabled()) {
-            this.createInteractionButton();
-        } else {
-            // If already enabled, we can auto-play
-            this.handleAudioPlayback();
-        }
+        this.createInteractionButton();
     }
 
     isAudioEnabled() {
@@ -102,15 +96,11 @@ class AudioManager {
                  pracSpaceBar.play();
                  break; 
              case 'neutral':
-                 if (spaceBarTrans) {               
-                     spaceBarTrans.play();
-                     spaceBarTrans.addEventListener('ended', function() {
-                         window.location.href = 'index.html';
-                     })
-                 } else {
-                     console.log("spaceBarTrans audio element not found.");
-                 }
-                 break;
+                spaceBarTrans.play();
+                spaceBarTrans.addEventListener('ended', function() {
+                    window.location.href = '../html/index.html';
+                });
+                break;
          
              case 'study':
                  // play the p1cookie.mp3 audio
@@ -124,53 +114,55 @@ class AudioManager {
      
              }   
 
-        // Listen again functionality 
+        // Listen again functionality, only for study phase
+        
+        if (pageID === 'study') {
+    
+            const playButton = document.getElementById('play-instructions');
 
-        const playButton = document.getElementById('play-instructions');
+            playButton.addEventListener('click', function() {
+                    lastAudio.play();
+            });
 
-        playButton.addEventListener('click', function() {
-                lastAudio.play();
-        });
+            // for the rest of the trials
 
-        // for the rest of the trials
-
-        const audioTrialPlayer = document.getElementById('trialPlayer');
-        
-        function playNextTrial() {
-            if (nextPhaseCounter < audioTrials.length + 3) {
-                audioTrialPlayer.src = audioTrials[nextPhaseCounter - 3];
-                audioTrialPlayer.play();
-        
-                lastAudio = audioTrialPlayer;
-            }
-        }
-        
-        
-        
-        const nextPhaseButtonAudio = document.getElementById('next-phase');
-        
-        nextPhaseButtonAudio.addEventListener('click', function() {
-            if (nextPhaseCounter === 0) {
-                
-            } else if (nextPhaseCounter === 1) {
-                // play the p2cookie.mp3 audio
-                audioPrac2.play();
-        
-                lastAudio = audioPrac2;
-            } else if (nextPhaseCounter === 2) {
-                audioTrial1.play();
-        
-                lastAudio = audioTrial1;
+            const audioTrialPlayer = document.getElementById('trialPlayer');
             
-            } else if (nextPhaseCounter === 26) {
-                // got rid of all done audio, playing through lookit 
-            } else{
-                playNextTrial();
+            function playNextTrial() {
+                if (nextPhaseCounter < audioTrials.length + 3) {
+                    audioTrialPlayer.src = audioTrials[nextPhaseCounter - 3];
+                    audioTrialPlayer.play();
+            
+                    lastAudio = audioTrialPlayer;
+                }
             }
-            nextPhaseCounter++;
-        });
+            
+            
+            
+            const nextPhaseButtonAudio = document.getElementById('next-phase');
+            
+            nextPhaseButtonAudio.addEventListener('click', function() {
+                if (nextPhaseCounter === 0) {
+                    
+                } else if (nextPhaseCounter === 1) {
+                    // play the p2cookie.mp3 audio
+                    audioPrac2.play();
+            
+                    lastAudio = audioPrac2;
+                } else if (nextPhaseCounter === 2) {
+                    audioTrial1.play();
+            
+                    lastAudio = audioTrial1;
+                
+                } else if (nextPhaseCounter === 26) {
+                    // got rid of all done audio, playing through lookit 
+                } else{
+                    playNextTrial();
+                }
+                nextPhaseCounter++;
+            });
 
-
+        }
     }
 }
 
