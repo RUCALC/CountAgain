@@ -15,34 +15,39 @@
 #spacebar-container {
     position: relative;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
 }
 
 
 #spacebar {
     display: block;
-    width: 70vw;
-    height: 75vh;
+    width: 70%;
+    height: auto;
+    position: relative;
     margin: 0 auto;
 }
 
 #arrow {
-    position: absolute;
-    left: 50%;
-    margin: 0 auto;
-    transform: rotate(180deg) translateX(50%);
-    width: 80px;
+    position: relative;
+    width: 5%;  
     height: auto;
+    margin: -5vh;
     animation: bounce 0.5s infinite alternate;
 }
 
 #message {
-    margin-top: 70px;
+    margin-top: 0.5vh;
+    margin-bottom: 0.5vh;
     font-size: 1.5em;
 }
 
 @keyframes bounce {
-        from { top: 650px; }
-        to { top: 610px; }
+        from { transform: rotate(180deg) translateY(90px); }
+        to { transform: rotate(180deg) translateY(70px); }
     
 }
 
@@ -70,8 +75,10 @@
 }
 
 button {
-    margin-top: 5vh;
-    font-size: 1.5em;
+    position: relative;
+    width: auto;
+    margin-top: 1vh;
+    font-size: 150%;
 }
 
 
