@@ -1,0 +1,2273 @@
+const jsPsych = initJsPsych({
+  case_sensitive_responses: false,
+  on_finish: () => {
+    if (document.fullscreenElement) document.exitFullscreen();
+    window.LOOKIT?.observer?.endSession?.();
+  }
+});
+
+const recExt = chsRecord ? [{ type: chsRecord.TrialRecordExtension }] : [];
+
+// ---------------- CONSENT / SURVEY ----------------
+const videoConfig = {
+  type: chsRecord.VideoConfigPlugin,
+  troubleshooting_intro:
+    "If you're having any trouble getting your webcam set up, please feel free to call the XYZ lab at (123) 456-7890 and we'd be glad to help you out!",
+};
+
+const startTrialsRec = { type: chsRecord.StartRecordPlugin };
+const stopTrialsRec = { type: chsRecord.StopRecordPlugin };
+
+const videoConsent = {
+    type: chsRecord.VideoConsentPlugin,
+    PIName: "Jenny Wang",
+    institution: "Rutgers University -- New Brunswick",
+    PIContact: "child.research@psych.rutgers.edu",
+    purpose:
+      "This study is part of a larger research program aiming to understand how infants and children develop their understanding of objects and quantities.",
+    procedures:
+      "We conduct studies with infants and children of all ages. For infant studies, infants are shown videos and images on the screen and we measure what they are interested in by recording their eye-movements. You may be asked to close your eyes while your child watches videos so that your behavior doesn’t influence where your child looks. Children may be asked to make judgments, answer questions (such as making predictions and providing explanations), learn from and teach others, observe events, and perform actions such pointing to parts of the screen. You and your child may be asked to answer a brief set of questions. There are no “right or wrong” responses to any of these questions or tasks, we simply want to find out how children of different ages understand and learn about the world.",
+    risk_statement:
+      "The risks associated with participation in this study are no greater than those encountered in daily life.",
+    voluntary_participation:
+      "There are multiple sessions in this study; you will be invited to complete another session next month for the next 6 months. It is okay not to do more sessions!",
+    payment:
+      "Parents often feel that they benefit from this experience because learning more about child development is interesting and enjoyable. Children often find our studies fun! This study may benefit society if the results lead to a better understanding of children’s behavior. After you finish the study, we will email you a $5 Amazon gift card within approximately one week days. To be eligible for the gift card your child must be in the age range for this study, you need to submit a valid consent statement, and we need to see that there is a child with you. But we will send a gift card even if you do not finish the whole study or we are not able to use your child's data!",
+    datause:
+      "We are primarily interested in your child's emotional reactions to the images and sounds. A research assistant will watch your video to measure the precise amount of delight in your child's face as he or she sees each cat picture.",
+    include_databrary: true,
+    additional_video_privacy_statement:
+      "We will also ask your permission to use your videos as an example for other parents, and to show examples of our research at academic and scientific conferences.",
+    gdpr: false,
+    research_rights_statement:
+      "You are not waiving any legal claims, rights or remedies because of your participation in this research study. If you feel you have been treated unfairly, or you have questions regarding your rights as a research subject, you may contact the Rutgers IRB Director at: Arts and Sciences IRB, 335 George St., Liberty Plaza Ste. 3200, New Brunswick, NJ 08901 (732) 235-2866 or the Rutgers Human Subjects Protection Program at (973) 972-1149, email us at humansubjects@ored.rutgers.edu.",
+    additional_segments: [
+      {
+        title: "US Patriot Act Disclosure",
+        text: "Lookit is a U.S. organization and all information gathered from the website is stored on servers based in the U.S. Therefore, your video recordings are subject to U.S. laws, such as the US Patriot Act. This act allows authorities access to the records of internet service providers. If you choose to participate in this study, you understand that your video recording will be stored and accessed in the USA. The security and privacy policy for Lookit can be found at the following link: <a href='https://lookit.mit.edu/privacy/' target='_blank' rel='noopener'>https://lookit.mit.edu/privacy/</a>.",
+      },
+    ],
+  };
+
+// ---------- PRE-SURVEY PAGE 1 (text moved higher; button unchanged) ----------
+const preSurveyPage1 = readyInstructionSmall(`
+  <div style="transform: translateY(-8vh);">
+    <div style="text-align:left">
+      <p style="font-size:22px; line-height:1.45; margin:0 0 18px 0;">
+        This study will take <b>15-20 minutes</b> to complete. After that, you will be able to select a level of privacy for your data.
+        To ensure that everything goes smoothly, please close other browser tabs and windows now.
+      </p>
+
+      <h2 style="font-size:36px; line-height:1.2; margin:10px 0 12px 0;">Study overview</h2>
+
+      <ul style="font-size:22px; line-height:1.5; padding-left:1.1em; margin:0;">
+        <li style="margin:10px 0;">
+          Your child will complete three tasks.
+          In one task, your child will <b>count what they see on screen.</b>
+          Another task will ask your child to <b>describe what they see on screen.</b>
+          In the last two tasks, your child will be asked to produce sets of objects by pressing the <b>spacebar on the keyboard.</b>
+          It’s important that they only press the spacebar. Please cover your touchpad so that your child does not touch it by accident.
+        </li>
+
+        <li style="margin:10px 0;">
+          When presented with the option to make a decision, your child should do so—by pressing the spacebar or by telling you
+          their choice and having you click for them.
+        </li>
+
+        <li style="margin:10px 0;">
+          You can move to the next question by pressing the green <b>“Ready!”</b> button that appears when your child has answered,
+          or by pressing the <b>“q”</b> key on the keyboard.
+        </li>
+      </ul>
+    </div>
+  </div>
+`);
+
+const preSurveyPage2 = readyInstructionSmall(`
+  <div style="text-align:left">
+    <h2 style="font-size:36px; line-height:1.2; margin:0 0 12px 0;">Remember</h2>
+
+    <ul style="font-size:22px; line-height:1.5; padding-left:1.1em; margin:0;">
+      <li style="margin:10px 0;">
+        <b>There are no wrong answers!</b> We’re interested in how children think about these questions, which may be different
+        from how adults think about them. We’ll need your help!
+      </li>
+      <li style="margin:10px 0;">
+        It’s important not to ‘give away’ your own thoughts about the answers—say “Okay!”, but not “That’s right!” or “Hmm, are you sure?”.
+      </li>
+      <li style="margin:10px 0;">
+        It’s natural to want to interact about the story and questions, but please hold discussion until the end of the study.
+      </li>
+      <li style="margin:10px 0;">
+        If your child gets distracted for a bit, that’s fine—please just encourage them to keep watching and listening.
+      </li>
+      <li style="margin:10px 0;">
+        If your child doesn’t answer a question right away, you can encourage them to answer—just don’t tell them what you think the answer is.
+      </li>
+    </ul>
+  </div>
+`);
+
+const survey_trial = {
+  type: jsPsychSurveyMultiChoice,
+  questions: [
+    {
+      prompt: "Where should you be during the study?",
+      name: "locationResponse",
+      options: [
+        "In the kitchen making food.",
+        "Sitting next to your child and help them understand the instructions.",
+        "Going to get some blueberries from the store.",
+      ],
+      required: true,
+    },
+    {
+      prompt: "Which of these can you say after your child answers a question?",
+      name: "postChildResponse",
+      options: ["Okay!", "Hmm, I don't think so.", "Are you sure?"],
+      required: true,
+    },
+    {
+      prompt: "What should you do if your child is distracted during a question?",
+      name: "childDistractionResponse",
+      options: [
+        "Quit the study.",
+        "Encourage them to keep watching and listening. You can also pause the study.",
+        "Give them a hint.",
+      ],
+      required: true,
+    },
+    {
+      prompt: "Is it ok to stop the study early?",
+      name: "withdrawal",
+      options: [
+        "No, I must complete the full study.",
+        "Yes, I can press F1 or ctrl-X or close the tab at any time.",
+      ],
+      required: true,
+    },
+  ],
+
+  on_load: function () {
+    // Correct option indices by question order (0-based)
+    const correctByQuestionIndex = [1, 0, 1, 1];
+
+    const questionDivs = Array.from(
+      document.querySelectorAll(".jspsych-survey-multi-choice-question")
+    );
+
+    const continueBtn =
+      document.querySelector("#jspsych-survey-multi-choice-next") ||
+      document.querySelector("input[type='submit']") ||
+      document.querySelector("button[type='submit']");
+
+    if (!continueBtn) {
+      console.error("Continue button not found.");
+      return;
+    }
+
+    function setFeedback(questionEl, msg) {
+      let fb = questionEl.querySelector(".custom-answer-feedback");
+      if (!fb) {
+        fb = document.createElement("div");
+        fb.className = "custom-answer-feedback";
+        fb.style.color = "red";
+        fb.style.marginTop = "6px";
+        fb.style.fontSize = "0.95em";
+        questionEl.appendChild(fb);
+      }
+      fb.textContent = msg;
+    }
+
+    function clearFeedback(questionEl) {
+      const fb = questionEl.querySelector(".custom-answer-feedback");
+      if (fb) fb.remove();
+    }
+
+    // Clear feedback when user changes any answer in a question
+    questionDivs.forEach((qDiv) => {
+      qDiv.addEventListener("change", () => clearFeedback(qDiv));
+    });
+
+    // Intercept before jsPsych handles the button
+    continueBtn.addEventListener(
+      "click",
+      function (e) {
+        let hasWrong = false;
+
+        questionDivs.forEach(clearFeedback);
+
+        questionDivs.forEach((qDiv, qIndex) => {
+          // Find all radio inputs for THIS question block
+          const radios = Array.from(qDiv.querySelectorAll("input[type='radio']"));
+          const checkedIndex = radios.findIndex((r) => r.checked);
+
+          // If unanswered, let jsPsych required logic handle it
+          if (checkedIndex === -1) return;
+
+          if (checkedIndex !== correctByQuestionIndex[qIndex]) {
+            hasWrong = true;
+            setFeedback(qDiv, "Try selecting a different answer above!");
+          }
+        });
+
+        if (hasWrong) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          return false;
+        }
+      },
+      true
+    );
+  },
+};
+// ---------------- HELPERS ----------------
+const RAW = (commit, path) => `https://raw.githubusercontent.com/hj374/Momo/${commit}/${path}`;
+const RAWR = (repo, commit, path) => `https://raw.githubusercontent.com/${repo}/${commit}/${path}`;
+
+const NEXT_BTN    = RAW("272a72873326d24fa7b675589cd04f9118277fd6","slides/nextbutton.png");
+const READY_BTN   = RAW("272a72873326d24fa7b675589cd04f9118277fd6","slides/readybutton.png");
+const YES_BTN     = RAW("272a72873326d24fa7b675589cd04f9118277fd6","slides/yesbutton.png");
+const NO_BTN      = RAW("272a72873326d24fa7b675589cd04f9118277fd6","slides/nobutton.png");
+const TRY_BTN     = RAW("272a72873326d24fa7b675589cd04f9118277fd6","slides/tryagainbutton.png");
+const READY_IMAGE = RAW("272a72873326d24fa7b675589cd04f9118277fd6","slides/ready.png");
+const TRY_IMAGE   = RAW("272a72873326d24fa7b675589cd04f9118277fd6","slides/try%20again.png");
+const GREAT_IMAGE = RAW("272a72873326d24fa7b675589cd04f9118277fd6","slides/great.png");
+
+let GA=null, SEL=null;
+function audio(){ if(!GA){ GA=new Audio(); GA.preload='auto'; } return GA; }
+function selectSFX(){ if(!SEL){ SEL=new Audio(); SEL.preload='auto'; SEL.src=RAWR('hj374/AquaMomo','28c2ca5d5cbbf7f15a944385c16f41903d648fcc','mp3/select_object.mp3'); } return SEL; }
+function stopAudio(){ const a=audio(); try{a.pause();}catch{} try{a.currentTime=0;}catch{} a.onended=null; a.onerror=null; }
+
+function fullImageScaffold(imgURL, opts={}){
+  const pos = opts.pos || 'right:24px; bottom:24px;';
+  const bg = opts.bg || '#000';
+  const extraImg = opts.imgStyle || '';
+  const text = opts.text || '';
+  const textOverlay = text ? `<div style="position:absolute; top:20px; left:50%; transform:translateX(-50%); z-index:10; background:rgba(0,0,0,.65); color:#fff; padding:14px 20px; border-radius:10px; font-size:clamp(16px, 1.9vw, 22px); text-align:center; max-width:90%;">${text}</div>` : '';
+  return `
+    <div style="position:fixed; inset:0; background:${bg}; overflow:hidden;">
+      <img src="${imgURL}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; ${extraImg}">
+      ${textOverlay}
+      <div id="btn-slot" style="position:absolute; ${pos}"></div>
+    </div>
+  `;
+}
+
+//jenny change text position from top:20px; to top: 90% changed font-size:clamp(16px, 1.9vw, 22px); to font-size:clamp(12px, 1.9vw, 22px); from text-align:center; to text-align:left
+function fullImageScaffoldW(imgURL, opts={}){
+  const pos = opts.pos || 'right:24px; bottom:24px;';
+  const bg = opts.bg || '#000';
+  const extraImg = opts.imgStyle || '';
+  const text = opts.text || '';
+  const textOverlay = text ? `<div style="position:absolute; top:90%; left:50%; transform:translateX(-50%); z-index:10; background:rgba(0,0,0,.65); color:#fff; padding:14px 20px; border-radius:10px; font-size:clamp(12px, 1.9vw, 16px); text-align:center; max-width:90%;">${text}</div>` : '';
+  return `
+    <div style="position:fixed; inset:0; background:${bg}; overflow:hidden;">
+      <img src="${imgURL}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; ${extraImg}">
+      ${textOverlay}
+      <div id="btn-slot" style="position:absolute; ${pos}"></div>
+    </div>
+  `;
+}
+
+function imageButton(src, alt, onClick, w='270px'){
+  const b=document.createElement('button');
+  b.style.border='none'; b.style.background='transparent'; b.style.padding='0'; b.style.margin='0'; b.style.cursor='pointer';
+  const i=document.createElement('img'); i.src=src; i.alt=alt||''; i.style.maxWidth='22vw'; i.style.width=w;
+  b.appendChild(i); b.onclick=onClick; return b;
+}
+
+const AUDIO_TIMEOUT = 10000;
+const CENTER_POS = 'left:50%; top:50%; transform:translate(-50%,-50%);';
+const CENTER_BOTTOM = 'left:50%; bottom:8vh; transform:translateX(-50%);';
+
+function audioImageWithNext(imgURL, audioURL, {btn=NEXT_BTN, btnPos, postDelayMs=0, record=true, tag=null, text=null}={}){
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: fullImageScaffold(imgURL, { pos: btnPos, text: text }),
+    choices: [],
+    data: { trial_tag: tag },
+    extensions: record ? recExt : undefined,
+    on_load: function(){
+      stopAudio();
+      const slot = document.getElementById('btn-slot');
+      const showBtn = () => {
+        if (!slot.querySelector('button')) {
+          const el = imageButton(btn, 'Next', ()=> jsPsych.finishTrial());
+          if (postDelayMs>0){ el.style.display='none'; slot.appendChild(el); setTimeout(()=>el.style.display='inline-block', postDelayMs); }
+          else { slot.appendChild(el); }
+        }
+      };
+      const a = audio();
+      a.onended = showBtn; a.onerror = showBtn;
+      const safety = setTimeout(showBtn, AUDIO_TIMEOUT);
+      let __srcSet=false; const tryPlay = () => { if(!__srcSet){ a.src=audioURL; __srcSet=true; } a.play().then(()=>clearTimeout(safety)).catch(()=>{}); };
+      tryPlay();
+      const unlock = () => { if(a.paused) tryPlay(); document.body.removeEventListener('pointerdown', unlock); };
+      document.body.addEventListener('pointerdown', unlock, { once:true });
+    },
+    on_finish: stopAudio
+  };
+}
+
+function audioImageWithNextLong(imgURL, audioURL, {btn=NEXT_BTN, btnPos, postDelayMs=0, record=true, tag=null, text=null}={}){
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: () => fullImageScaffoldW((typeof imgURL === 'function' ? imgURL() : imgURL), { pos: btnPos, text: text }),
+    choices: [],
+    data: { trial_tag: tag },
+    extensions: record ? recExt : undefined,
+    on_load: function(){
+      stopAudio();
+      const slot = document.getElementById('btn-slot');
+      const showBtn = () => {
+        if (!slot.querySelector('button')) {
+          const el = imageButton(btn, 'Next', ()=> jsPsych.finishTrial());
+          if (postDelayMs>0){ el.style.display='none'; slot.appendChild(el); setTimeout(()=>el.style.display='inline-block', postDelayMs); }
+          else { slot.appendChild(el); }
+        }
+      };
+      const a = audio();
+      a.onended = showBtn; a.onerror = showBtn;
+      const safety = setTimeout(showBtn, AUDIO_TIMEOUT);
+      let __srcSet=false; const tryPlay = () => { if(!__srcSet){ a.src=audioURL; __srcSet=true; } a.play().then(()=>clearTimeout(safety)).catch(()=>{}); };
+      tryPlay();
+      const unlock = () => { if(a.paused) tryPlay(); document.body.removeEventListener('pointerdown', unlock); };
+      document.body.addEventListener('pointerdown', unlock, { once:true });
+    },
+    on_finish: stopAudio
+  };
+}
+
+function imagePressQ(imgURL, {promptText='press q to finish', bottomRight=true, showAfterMs=0, record=true, tag=null}={}) {
+  let _onKey = null;
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: fullImageScaffold(imgURL),
+    choices: [],
+    data: { trial_tag: tag },
+    extensions: record ? recExt : undefined,
+    on_load: function () {
+      // ensure absolutely no audio on this page
+      stopAudio();
+
+      let shown = false;
+      const showPrompt = () => {
+        if (shown) return; shown = true;
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `position:absolute; ${bottomRight ? 'right:2.2vw; bottom:2.2vh;' : 'left:50%; top:50%; transform:translate(-50%,-50%);'} z-index:5; background:rgba(0,0,0,.55); color:#fff; padding:10px 14px; border-radius:10px; font-size:clamp(14px,1.8vw,20px);`;
+        overlay.textContent = promptText;
+        jsPsych.getDisplayElement().querySelector('div').appendChild(overlay);
+        function onKey(e){ if(e.repeat) return; if(e.key==='q'||e.key==='Q'){ document.removeEventListener('keydown', onKey); jsPsych.finishTrial(); } }
+        _onKey = onKey;
+        document.addEventListener('keydown', onKey);
+      };
+      if (showAfterMs > 0) jsPsych.pluginAPI.setTimeout(showPrompt, showAfterMs); else showPrompt();
+    },
+    on_finish: function() {
+      if (_onKey) { document.removeEventListener('keydown', _onKey); _onKey = null; }
+    }
+  };
+}
+
+
+function audioImageImmediate(imgURL, audioURL, {btn=READY_BTN, btnPos, record=true, tag=null}={}) {
+  // Force bottom-right for the green READY_IMAGE slides; otherwise honor given
+  // position or fall back to center.
+  const computedPos = (imgURL === READY_IMAGE)
+    ? 'right:24px; bottom:24px;'
+    : (btnPos || 'left:50%; top:50%; transform:translate(-50%,-50%);');
+
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: fullImageScaffold(imgURL, { pos: computedPos }),
+    choices: [],
+    data: { trial_tag: tag },
+    extensions: record ? recExt : undefined,
+    on_load: function(){
+      const slot = document.getElementById('btn-slot');
+      slot.appendChild( imageButton(btn, 'Ready', ()=> jsPsych.finishTrial()) );
+
+      // play audio immediately (if provided)
+      stopAudio();
+      const a = audio();
+      let __srcSet = false;
+      const tryPlay = () => { if (!__srcSet) { a.src = audioURL; __srcSet = true; } a.play().catch(()=>{}); };
+      tryPlay();
+      const unlock = () => { if (a.paused) tryPlay(); document.body.removeEventListener('pointerdown', unlock); };
+      document.body.addEventListener('pointerdown', unlock, { once:true });
+    },
+    on_finish: stopAudio
+  };
+}
+
+function audioImageAuto(imgURL, audioURL, {record=true, tag=null}={}){
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: fullImageScaffold(imgURL),
+    choices: [],
+    data: { trial_tag: tag },
+    extensions: record ? recExt : undefined,
+    on_load: function(){
+      stopAudio();
+      const a = audio();
+      const finish = ()=> jsPsych.finishTrial();
+      a.onended = finish; a.onerror = finish;
+      let __srcSet=false; const tryPlay=()=>{ if(!__srcSet){ a.src=audioURL; __srcSet=true; } a.play().catch(()=>{}); };
+      tryPlay();
+      const unlock=()=>{ if(a.paused) tryPlay(); document.body.removeEventListener('pointerdown', unlock); };
+      document.body.addEventListener('pointerdown', unlock, {once:true});
+    },
+    on_finish: stopAudio
+  };
+}
+
+// Instruction + audio (center-bottom Ready). Audio stops when pressed.
+// div = dividing style (html), how you want words to look like on the screen
+function readyInstructionAudio(html, audioURL){
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <div style="position:fixed; inset:0; background:#fff;">
+        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+          <div style="max-width:900px; text-align:center; font-size:28px; line-height:1.35; color:#111;">${html}</div>
+        </div>
+        <div id="btn-slot" style="position:absolute; left:50%; bottom:8vh; transform:translateX(-50%);"></div>
+      </div>
+    `,
+    choices: [],
+    extensions: recExt,
+    on_load: function(){
+      const slot = document.getElementById('btn-slot');
+      slot.appendChild( imageButton(READY_BTN, 'Ready', ()=> jsPsych.finishTrial()) );
+      stopAudio(); const a=audio(); let __src=false; const play=()=>{ if(!__src){ a.src=audioURL; __src=true; } a.play().catch(()=>{});};
+      play();
+      const unlock=()=>{ if(a.paused) play(); document.body.removeEventListener('pointerdown', unlock); };
+      document.body.addEventListener('pointerdown', unlock, {once:true});
+    },
+    on_finish: stopAudio
+  };
+}
+
+
+
+// With audio: play, then show a Q-to-finish overlay after (no Next)
+function audioImagePressQ(imgURL, audioURL, {delayAfterAudioMs=0, bottomRight=true, record=true, tag=null}={}){
+  let _onKey = null;
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: fullImageScaffold(imgURL),
+    choices: [],
+    data: { trial_tag: tag },
+    extensions: record ? recExt : undefined,
+    on_load: function(){
+      stopAudio();
+      const a = audio();
+      const showPrompt = ()=>{
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `position:absolute; ${bottomRight?'right:2.2vw; bottom:2.2vh;':'left:50%; top:50%; transform:translate(-50%,-50%);'} z-index:5; background:rgba(0,0,0,.6); color:#fff; padding:18px 22px; border-radius:12px; font-size:clamp(16px, 1.9vw, 24px); text-align:center;`;
+        overlay.textContent = 'Press Q to finish';
+        jsPsych.getDisplayElement().querySelector('div').appendChild(overlay);
+        function onKey(e){ if (e.repeat) return; if (e.key==='q'||e.key==='Q'){ document.removeEventListener('keydown', onKey); jsPsych.finishTrial(); } }
+        _onKey = onKey;
+        document.addEventListener('keydown', onKey);
+      };
+      a.onended = ()=> setTimeout(showPrompt, delayAfterAudioMs);
+      a.onerror = ()=> setTimeout(showPrompt, delayAfterAudioMs);
+      let __src=false; const play=()=>{ if(!__src){ a.src=audioURL; __src=true; } a.play().catch(()=>{}); };
+      play();
+      const unlock=()=>{ if(a.paused) play(); document.body.removeEventListener('pointerdown', unlock); };
+      document.body.addEventListener('pointerdown', unlock, { once:true });
+    },
+    on_finish: function() {
+      stopAudio();
+      if (_onKey) { document.removeEventListener('keydown', _onKey); _onKey = null; }
+    }
+  };
+}
+
+// *** Instruction slide helper — CENTER-BOTTOM only ***
+function readyInstruction(html){
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <div style="position:fixed; inset:0; background:#fff;">
+        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+          <div style="max-width:900px; text-align:center; font-size:28px; line-height:1.35; color:#111;">${html}</div>
+        </div>
+        <div id="btn-slot" style="position:absolute; ${CENTER_BOTTOM}"></div>
+      </div>
+    `,
+    choices: [],
+    extensions: recExt,
+    on_load: function(){
+      document.getElementById('btn-slot').appendChild( imageButton(READY_BTN, 'Ready', ()=> jsPsych.finishTrial()) );
+    }
+  };
+}
+
+function yesNoDecision(promptHTML, record=true, tag="decision"){
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <div style="position:fixed; inset:0; background:#fff;">
+        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+          <div style="text-align:center; font-size:42px; line-height:1.25; color:#111;">${promptHTML}</div>
+        </div>
+        <div style="position:absolute; left:50%; bottom:18vh; transform:translateX(-50%); display:flex; gap:46px;">
+          <button id="btnNo" style="border:none;background:transparent;cursor:pointer;"><img src="${NO_BTN}" alt="No" style="width:260px;"></button>
+          <button id="btnYes" style="border:none;background:transparent;cursor:pointer;"><img src="${YES_BTN}" alt="Yes" style="width:260px;"></button>
+        </div>
+      </div>
+    `,
+    choices: [],
+    data: { trial_tag: tag },
+    extensions: record ? recExt : undefined,
+    on_load: function(){
+      document.getElementById('btnNo').onclick  = () => jsPsych.finishTrial({response:0});
+      document.getElementById('btnYes').onclick = () => jsPsych.finishTrial({response:1});
+    }
+  };
+}
+
+function lastDecision(tag){
+  const v = jsPsych.data.get().filter({trial_tag: tag}).last(1).values()[0];
+  if (!v) return null;
+  return (v.response !== undefined) ? Number(v.response)
+       : (v.button_pressed !== undefined) ? Number(v.button_pressed)
+       : (v.choice !== undefined) ? Number(v.choice)
+       : null;
+}
+
+function cameraPreviewTrial({delayMs=5000}={}){
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <div style="position:fixed; inset:0; background:#fff;">
+        <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;">
+          <div style="text-align:center; color:#111;">
+            <div style="font-size:36px; line-height:1.25; font-weight:600;">Please show drawing to camera</div>
+            <div style="font-size:20px; line-height:1.3; margin-top:4px; color:#444;">
+              Make sure the drawing is on the screen
+            </div>
+          </div>
+          <div style="width:min(80vw, 960px); aspect-ratio:16/9; background:#000; border-radius:12px; overflow:hidden; box-shadow:0 6px 32px rgba(0,0,0,.25);">
+            <video id="drawCam" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover;"></video>
+          </div>
+        </div>
+        <div id="btn-slot" style="position:absolute; right:24px; bottom:24px;"></div>
+      </div>
+    `,
+    choices: [],
+    extensions: recExt,
+    on_load: async function(){
+      try{
+        const stream = await navigator.mediaDevices.getUserMedia({ video:true, audio:false });
+        const v = document.getElementById('drawCam'); v.srcObject = stream;
+        this._camStream = stream;
+      }catch{}
+      const slot = document.getElementById('btn-slot');
+      const b = imageButton(NEXT_BTN, 'Next', ()=> jsPsych.finishTrial(), '320px');
+      b.style.display='none'; slot.appendChild(b); setTimeout(()=> b.style.display='inline-block', delayMs);
+    },
+    on_finish: function() {
+      if (this._camStream) { this._camStream.getTracks().forEach(t=>t.stop()); this._camStream = null; }
+    }
+  };
+}
+
+// Smaller "Ready!" helper (bottom-center, same layout)
+function readyInstructionSmall(html){
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <div style="position:fixed; inset:0; background:#fff;">
+        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+          <div style="max-width:900px; text-align:center; font-size:28px; line-height:1.35; color:#111;">${html}</div>
+        </div>
+        <div id="btn-slot" style="position:absolute; left:50%; transform:translateX(-50%); bottom:24px;"></div>
+      </div>
+    `,
+    choices: [],
+    extensions: recExt,
+    on_load: function(){
+      document.getElementById('btn-slot')
+        .appendChild( imageButton(READY_BTN, 'Ready', ()=> jsPsych.finishTrial(), '180px') );
+    }
+  };
+}
+
+function imageWithTimedNext(
+  imgURL,
+  delayMs = 15000,
+  { btn = NEXT_BTN, btnPos = 'right:24px; bottom:24px;', record = true, tag = null } = {}
+) {
+  // closure variable shared by on_load + on_finish
+  let timedNextCleanup = null;
+
+  return {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: fullImageScaffold(imgURL, { pos: btnPos }),
+    choices: "NO_KEYS",
+    data: { trial_tag: tag },
+    extensions: record ? recExt : undefined,
+
+    on_load: function () {
+      const forceSilent = () => {
+        try {
+          stopAudio?.();
+          const a = audio?.();
+          if (a) {
+            a.pause?.();
+            a.currentTime = 0;
+            a.onended = null;
+            a.onerror = null;
+            // DO NOT set a.src = "" (causes Invalid URI in some browsers)
+            a.removeAttribute?.("src");
+            // a.load?.(); // optional; only if you need to reset media element
+          }
+        } catch (err) {
+          console.warn("forceSilent error:", err);
+        }
+      };
+
+      forceSilent();
+
+      const displayEl =
+        (typeof jsPsych.getDisplayElement === "function" && jsPsych.getDisplayElement()) ||
+        document.body;
+
+      const slot = document.getElementById("btn-slot");
+      if (!slot) {
+        console.error("imageWithTimedNext: #btn-slot not found");
+        return;
+      }
+
+      let nextEnabled = false;
+      let finished = false;
+
+      const nextBtn = imageButton(btn, "Next", () => {});
+      nextBtn.classList.add("timed-next-btn");
+      nextBtn.style.display = "none";
+      nextBtn.style.position = "relative";
+      nextBtn.style.zIndex = "10001";
+      slot.appendChild(nextBtn);
+
+      // Shield overlay blocks ALL pointer/touch until timer ends
+      const shield = document.createElement("div");
+      shield.id = "timed-next-shield";
+      shield.style.position = "fixed";
+      shield.style.inset = "0";
+      shield.style.background = "transparent";
+      shield.style.zIndex = "10000";
+      shield.style.pointerEvents = "auto";
+
+      const swallow = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation?.();
+        forceSilent();
+        return false;
+      };
+
+      const shieldEvents = [
+        "click",
+        "dblclick",
+        "mousedown",
+        "mouseup",
+        "pointerdown",
+        "pointerup",
+        "touchstart",
+        "touchend",
+        "contextmenu",
+      ];
+      shieldEvents.forEach((evt) => shield.addEventListener(evt, swallow, true));
+      displayEl.appendChild(shield);
+
+      // Block all keyboard (prevents space/enter/global handlers/audio unlock)
+      const blockKeys = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation?.();
+        forceSilent();
+        return false;
+      };
+      document.addEventListener("keydown", blockKeys, true);
+      document.addEventListener("keyup", blockKeys, true);
+      document.addEventListener("keypress", blockKeys, true);
+
+      // Optional extra safety: keep audio dead while this screen is active
+      const silenceInterval = setInterval(forceSilent, 250);
+
+      const cleanup = () => {
+        clearInterval(silenceInterval);
+        document.removeEventListener("keydown", blockKeys, true);
+        document.removeEventListener("keyup", blockKeys, true);
+        document.removeEventListener("keypress", blockKeys, true);
+        try { shield.remove(); } catch {}
+      };
+
+      const finishNow = (e) => {
+        if (!nextEnabled || finished) {
+          e?.preventDefault?.();
+          e?.stopPropagation?.();
+          e?.stopImmediatePropagation?.();
+          forceSilent();
+          return false;
+        }
+
+        finished = true;
+        e?.preventDefault?.();
+        e?.stopPropagation?.();
+        e?.stopImmediatePropagation?.();
+
+        forceSilent();
+        clearTimeout(timerId);
+        cleanup();
+
+        // defer one tick to avoid event-stack conflicts
+        setTimeout(() => {
+          jsPsych.finishTrial({ timed_next_clicked: true });
+        }, 0);
+
+        return false;
+      };
+
+      // Delegate click handling on slot; works for nested img/span inside imageButton
+      const slotClickHandler = (e) => {
+        if (!nextEnabled) return;
+
+        const target =
+          e.target && e.target.nodeType === 3 ? e.target.parentElement : e.target;
+
+        const insideNext = !!target?.closest?.(".timed-next-btn");
+        if (insideNext) {
+          finishNow(e);
+        }
+      };
+
+      slot.addEventListener("click", slotClickHandler, true);
+      slot.addEventListener("pointerup", slotClickHandler, true);
+      slot.addEventListener("touchend", slotClickHandler, true);
+
+      const timerId = setTimeout(() => {
+        nextEnabled = true;
+        try { shield.remove(); } catch {}
+        nextBtn.style.display = "inline-block";
+        forceSilent();
+      }, delayMs);
+
+      // store cleanup in closure, NOT on `this`
+      timedNextCleanup = () => {
+        clearTimeout(timerId);
+        slot.removeEventListener("click", slotClickHandler, true);
+        slot.removeEventListener("pointerup", slotClickHandler, true);
+        slot.removeEventListener("touchend", slotClickHandler, true);
+        cleanup();
+      };
+    },
+
+    on_finish: function () {
+      try {
+        if (typeof timedNextCleanup === "function") timedNextCleanup();
+      } catch (err) {
+        console.warn("timedNextCleanup error:", err);
+      }
+    }
+  };
+}
+
+function withTag(trial, game_tag) {
+  return {
+    ...trial,
+    data: { ...(trial.data || {}), game_tag }
+  };
+}
+
+// Track which session assets failed to load and their session1 fallback URLs
+const failedSessionAssets = new Map(); // Maps failed URL -> session1 URL
+
+function getForcedStudySessionNumber() {
+  const fromWindow = Number(window.__FORCE_STUDY_SESSION__);
+  if (Number.isInteger(fromWindow) && fromWindow >= 1) return fromWindow;
+
+  try {
+    const fromStorage = Number(window.localStorage?.getItem('forceStudySession'));
+    if (Number.isInteger(fromStorage) && fromStorage >= 1) return fromStorage;
+  } catch {}
+
+  try {
+    const fromQuery = Number(new URLSearchParams(window.location.search).get('forceSession'));
+    if (Number.isInteger(fromQuery) && fromQuery >= 1) return fromQuery;
+  } catch {}
+
+  return null;
+}
+
+function getCurrentStudySessionNumber() {
+  const forced = getForcedStudySessionNumber();
+  if (forced !== null) {
+    console.warn(`Using forced study session: ${forced}`);
+    return forced;
+  }
+
+  const pastSessions = window.chs?.pastSessions;
+  if (Array.isArray(pastSessions)) {
+    return Math.max(1, pastSessions.length + 1);
+  }
+  return 1;
+}
+
+let CURRENT_STUDY_SESSION = getCurrentStudySessionNumber();
+
+function withCurrentSessionAsset(url) {
+  return url.replace(/\/session\d+\//, `/session${CURRENT_STUDY_SESSION}/`);
+}
+
+// Helper to get session1 version of a URL
+function getSession1Asset(url) {
+  return url.replace(/\/session\d+\//, '/session1/');
+}
+
+const BASE_PIC_1 = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/session1/parent_child.png";
+const BASE_WOC_1 = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/session1/WOC_1.png";
+const BASE_WOC_2 = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/session1/WOC_2.png";
+const BASE_WOC_3 = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/session1/WOC_3.png";
+const BASE_WOC_4 = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/session1/WOC_4.png";
+const BASE_WOC_5 = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/session1/WOC_5.png";
+const BASE_TURT  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/session1/toy_1.png";
+const BASE_PENG  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/session1/toy_2.png";
+
+let PIC_1 = "";
+let WOC_1 = "";
+let WOC_2 = "";
+let WOC_3 = "";
+let WOC_4 = "";
+let WOC_5 = "";
+let TURT  = "";
+let PENG  = "";
+
+function applyCurrentSessionAssets() {
+  PIC_1 = withCurrentSessionAsset(BASE_PIC_1);
+  WOC_1 = withCurrentSessionAsset(BASE_WOC_1);
+  WOC_2 = withCurrentSessionAsset(BASE_WOC_2);
+  WOC_3 = withCurrentSessionAsset(BASE_WOC_3);
+  WOC_4 = withCurrentSessionAsset(BASE_WOC_4);
+  WOC_5 = withCurrentSessionAsset(BASE_WOC_5);
+  TURT  = withCurrentSessionAsset(BASE_TURT);
+  PENG  = withCurrentSessionAsset(BASE_PENG);
+}
+
+function setStudySession(sessionNumber) {
+  const n = Number(sessionNumber);
+  if (!Number.isInteger(n) || n < 1) {
+    console.error('setStudySession expects an integer >= 1');
+    return false;
+  }
+
+  CURRENT_STUDY_SESSION = n;
+  applyCurrentSessionAssets();
+  console.log(`Study session set to ${n}`);
+  return true;
+}
+
+// Expose for runtime use and backwards compatibility with prior debug naming.
+window.setStudySession = setStudySession;
+window.setStudySessionForDebug = setStudySession;
+
+window.clearStudySessionDebugOverride = function() {
+  try { window.localStorage?.removeItem('forceStudySession'); } catch {}
+  delete window.__FORCE_STUDY_SESSION__;
+  console.log('Cleared forced study session override.');
+};
+
+applyCurrentSessionAssets();
+
+// ---------------- ASSETS ----------------
+const SETUP = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/setup.jpeg";
+
+const A_SETUP = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/parent_sit.mp3";
+const WOC_INTRO = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_intro.mp3";
+const HowMany = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_howmany.mp3"; //"How many? Can you count?";
+
+const GO_C = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_go_correct.mp3";
+const GO_W = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_go_wrong.mp3";
+const NOGO_C = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_nogo_correct.mp3";
+const NOGO_W = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_nogo_wrong.mp3";
+
+
+const PIC_INTRO = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_story1.mp3";  //"thank you for helping Momo! next, you and your parent will work together to show Momo what you see on a page from a book."
+const WhatPic = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/storybook2.m4a"; //"Wow, so much to talk about!"
+const P_END  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_thankyou.mp3"; // "thank you both! now Momo knows a lot more about numbers, thanks to you! "
+
+
+const COUSIN_BG = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/COUSIN_BG.png";
+const COUSIN_T = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/COUSIN_T.png";
+
+const COUSIN_C = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/COUSIN_C.png";
+const COUSIN_HC = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/COUSIN_HC.png";
+
+const COUSIN_HT = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/COUSIN_HT.png";
+const COUSIN_HB = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/COUSIN_HB.png";
+
+const A_GIVN1  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_1.mp3";
+const A_GIVN2  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_2.mp3";
+const A_GIVN3  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_3.mp3";
+const A_GIVN4  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_4.mp3";
+const A_GIVN5  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_5.mp3";
+const A_GIVN6  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_6.mp3";
+const A_GIVN7  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_7.mp3";
+const A_GIVN8  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_8.mp3";
+const A_GIVN9  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_9.mp3";
+const A_GIVN10  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_10.mp3";
+
+const GIVN_AMOUNT_BY_AUDIO = {
+  [A_GIVN1]: 1,
+  [A_GIVN2]: 2,
+  [A_GIVN3]: 3,
+  [A_GIVN4]: 4,
+  [A_GIVN5]: 5,
+  [A_GIVN6]: 6,
+  [A_GIVN7]: 7,
+  [A_GIVN8]: 8,
+  [A_GIVN9]: 9,
+  [A_GIVN10]: 10
+};
+
+
+
+const GNG_I_1 = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin1.m4a";  //"Momo also brought some games to play with you. "
+const GNG_I_2  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_cousin2.mp3"; //"This is Momos tablet. Sometimes a picture of her cousin shows up,
+const GNG_I_2T  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin2T.m4a"; //and you should tap spacebar to move the turtle toy down to the gray shopping cart for her cousin."
+const GNG_I_2K  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_cousin2K.mp3"; //and you should tap spacebar to move the turtle toy down to the gray shopping cart for her cousin."
+const GNG_I_2B  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin2B.m4a"; //"This is Momos tablet. Sometimes a picture of her cousin shows up, and you should tap spacebar to move the turtle toy down to the gray shopping cart for her cousin."
+
+const GNG_I_3  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_cousin3.mp3"; //"Other times, no cousin shows up at all. When there is no cousin, you should not tap the spacebar at all. Just leave the turtle on the shelf."
+const GNG_I_3B  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin3B.m4a"; //"Other times, no cousin shows up at all. When there is no cousin, you should not tap the spacebar at all. Just leave the turtle on the shelf."
+
+const POOF  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/POOF.mp3"; // poof sound to indicate trial boundary
+const GNG_1  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_cousin4.mp3"; //"Remember, only tap to move the turtle toy when you see a cousin! Do not tap anything when there is no cousin!"
+
+
+// original from luna study
+const SL1      = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/Slide1.png";
+const A_INTRO = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/intro.mp3";
+//= RAW("923999cb744978fdb4f423892579cb9fb7908b2c","intro.m4a");
+const SL3      = RAW("3d92a6802e6641bf40c8db2cc45e109a373bab78","slides/slide%203.png"); // updated commit
+const A_DSTART = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","D_start.m4a");
+const SL4      = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/Slide4.png";
+const A_OHNO   = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","D_ohno.m4a");
+const A_KNOWS  = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","intro_momoknows.m4a");
+
+const D1       = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","D_1.png");
+const A_LINE   = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","D_line.m4a");
+const D2       = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","D_2.png");
+const A_DOT    = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","D_dot.m4a");
+const A_NICE   = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","D_nice.m4a");
+const A_HM     = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","D_hm.m4a");
+
+// GIFs and their BW stills
+const G3       = RAW("464c1ad683a55d0f672a9b9a21e0668fd10ee1b0","D3finalgif.gif");
+const G3_BW    = RAW("1e9cc8e8d29eadbc7679e9f1da87d896bc881328","D_3bw.png");
+const G4       = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","D_4gif.gif");
+const G4_BW    = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","D_4bw.png");
+const G5       = RAW("464c1ad683a55d0f672a9b9a21e0668fd10ee1b0","D5finalgif.gif");
+const G5_BW    = RAW("1e9cc8e8d29eadbc7679e9f1da87d896bc881328","D_5bw.png");
+const G6       = RAW("464c1ad683a55d0f672a9b9a21e0668fd10ee1b0","D6finalgif.gif");
+const G6_BW    = RAW("1e9cc8e8d29eadbc7679e9f1da87d896bc881328","D_6bw.png");
+const A_BUB    = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","D_bub.m4a");
+const A_TURT   = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","D_turt.m4a");
+const A_JELLY  = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","D_jelly.m4a");
+const A_STAR   = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","D_star.m4a");
+
+const SL38     = RAW("140b7239d20403b2d71e5125efd941dabd8633d9","slides/slide%2038.png");
+const A_END    = "https://raw.githubusercontent.com/hj374/Momo/main/D_end.m4a";
+const SL40     = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/Slide4.png";
+const A_BREAK  = RAW("140b7239d20403b2d71e5125efd941dabd8633d9","break.m4a");
+const SL39     = RAW("140b7239d20403b2d71e5125efd941dabd8633d9","slides/slide%2039.png");
+const A_MINTR  = RAW("923999cb744978fdb4f423892579cb9fb7908b2c","M_intro.mp3");
+const COUSIN   = RAW("1e9cc8e8d29eadbc7679e9f1da87d896bc881328","cousin.png");
+const A_MCOUS  = RAW("d9eb529580ef6f6a6327fd11da045ecfe67090b2","M_cousins.mp3");
+const SL_KEYBD = RAW("c63ff81cfd56d101b35cb73524bfd4f2e67ccdc6","keyboard%20instructions.PNG");
+const A_MINSTR1= RAW("c63ff81cfd56d101b35cb73524bfd4f2e67ccdc6","m_instructions1.m4a");
+const A_MINSTR = RAW("c63ff81cfd56d101b35cb73524bfd4f2e67ccdc6","m_instructions2.m4a");
+const A_MLETS  = RAW("464c1ad683a55d0f672a9b9a21e0668fd10ee1b0","M_more.mp3");
+const A_MDIREC = RAW("8389b117295670c4578592aca57608eaa27fbe30","M_direc.m4a");
+
+const COUSIN1  = RAW("d9eb529580ef6f6a6327fd11da045ecfe67090b2","slides/cousin1.png");
+const COUSIN2  = RAW("d9eb529580ef6f6a6327fd11da045ecfe67090b2","slides/cousin2.png");
+const COUSIN3  = RAW("d9eb529580ef6f6a6327fd11da045ecfe67090b2","slides/cousin3.png");
+const COUSIN4  = RAW("d9eb529580ef6f6a6327fd11da045ecfe67090b2","slides/cousin4.png");
+const COUSIN5  = RAW("d9eb529580ef6f6a6327fd11da045ecfe67090b2","slides/cousin5.png");
+const COUSIN6  = RAW("d9eb529580ef6f6a6327fd11da045ecfe67090b2","slides/cousin6.png");
+const COUSIN7  = RAW("d9eb529580ef6f6a6327fd11da045ecfe67090b2","slides/cousin7.png");
+
+const SL50     = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/Slide5.png";
+const A_MEND   = RAW("239bb2631a377401fe888f3e002960a186c14f0a","M_end.m4a");
+const SL51     = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/Slide5.png";
+const A_HCIN   = RAW("239bb2631a377401fe888f3e002960a186c14f0a","HC_intro.m4a");
+const SL52     = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/Slide5.png";
+const A_HCCNT  = RAW("d99a7418e41c993dc66826bf1863b41c1045252d", "newhc.m4a");
+const QUAL_IMG = RAW("1e9cc8e8d29eadbc7679e9f1da87d896bc881328","qualtricsform.png");
+const SL53     = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/Slide5.png";
+const A_HCEND  = RAW("239bb2631a377401fe888f3e002960a186c14f0a","HC_end.m4a");
+
+const A_GIVN   = RAW("5a6377d9f544169648207be96d49b49e6ee22030","given_intro.m4a");
+const A_NSPBR  = RAW("5a6377d9f544169648207be96d49b49e6ee22030","given_spacebar.m4a");
+
+
+const WHL      = RAW("5a6377d9f544169648207be96d49b49e6ee22030","whale.png");
+const GLDFSH   = RAW("5a6377d9f544169648207be96d49b49e6ee22030","goldfish.png");
+const SMLMO    = RAW("5a6377d9f544169648207be96d49b49e6ee22030","momosmall.png");
+const A_NEWOUT = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/outro.mp3"; //RAW("5a6377d9f544169648207be96d49b49e6ee22030","newoutro.m4a")
+const SL66     = RAW("e2f4d349a7daf6210134be08cb662552fce77b41","slide 66.png")
+
+const KEYB7    = RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard_7.png");
+const KEYB8    = RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard_8.png");
+const KEYB9    = RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard_9.png");
+const A_KEYB1  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_cousin1K.mp3";//= RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard1 (1).m4a")
+const A_KEYB2  = RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard2 (1).m4a")
+const A_KEYB3  = RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard3 (1).m4a")
+const A_KEYB4  = RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard4 (1).m4a")
+const A_KEYB5  = RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard5 (1).m4a")
+const A_KEYB6  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_key3.mp3";//= RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard6 (1).m4a")
+const A_KEYB7  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_key4.mp3";//= RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard7 (1).m4a")
+
+const KEYB11   = RAW("aa3c1e3e96cb6355b9b0398dd29c34abf62db45f","keyb1.png")
+const KEYB21   = RAW("18480f74837f722df585f4158a323fc7bd01ecd8","key2.png")
+const KEYB31   = RAW("18480f74837f722df585f4158a323fc7bd01ecd8","key3.png")
+const KEYB41   = RAW("18480f74837f722df585f4158a323fc7bd01ecd8","key4.png")
+const KEYB51   = RAW("aa3c1e3e96cb6355b9b0398dd29c34abf62db45f","keyb5.png")
+const SL67     = RAW("18480f74837f722df585f4158a323fc7bd01ecd8","cousin67.png")
+const SL68     = RAW("0a40b0dbf586431bea51b31dbb935dd7f0363014","cousin68.png")
+const SL69     = RAW("0a40b0dbf586431bea51b31dbb935dd7f0363014","cousin69.png") //single cousin image
+const SL70     = RAW("0a40b0dbf586431bea51b31dbb935dd7f0363014","cousin70.png")
+const SL71     = RAW("0a40b0dbf586431bea51b31dbb935dd7f0363014","cousin71.png")
+const SL72     = RAW("0a40b0dbf586431bea51b31dbb935dd7f0363014","cousin72.png")
+
+// ---------------- PRELOAD ----------------
+//THE LIST NEEDS TO BE THE PATH FROM GITHUB
+const preload_images = [
+  SL1, SL3, SL4, D1, D2, READY_IMAGE, TRY_IMAGE, GREAT_IMAGE,
+  G3, G3_BW, G4, G4_BW, G5, G5_BW, G6, G6_BW, SETUP,
+  COUSIN1, COUSIN2, COUSIN3, COUSIN4, COUSIN5, COUSIN6, COUSIN7, TURT,
+PIC_1, WOC_1, WOC_2, WOC_3, WOC_4,WOC_5,
+  SL38, SL40, SL39, COUSIN, SL_KEYBD, SL50, SL51, SL52, SL53, QUAL_IMG,
+  NEXT_BTN, READY_BTN, YES_BTN, NO_BTN, TRY_BTN,
+  WHL, GLDFSH, PENG, SMLMO,
+  KEYB11, KEYB21, KEYB31, KEYB41, KEYB51, KEYB7, KEYB8, KEYB9,
+  SL67, SL68, SL69, SL70, SL71, SL72
+];
+
+const preload = {
+  type: jsPsychPreload,
+  images: preload_images,
+  audio: [
+    A_SETUP, A_INTRO, A_DSTART, A_OHNO, A_KNOWS, A_LINE, A_DOT, A_NICE, A_HM, A_BUB, A_TURT, A_JELLY, A_STAR, A_END, A_BREAK,
+    WOC_INTRO, HowMany, PIC_INTRO, WhatPic, P_END, GNG_I_1, GNG_I_2, GNG_I_2T, GNG_I_2B, GNG_I_3, GNG_I_3B, POOF, GNG_1,
+A_GIVN1, A_GIVN2, A_GIVN3, A_GIVN4, A_GIVN5, A_GIVN6, A_GIVN7, A_GIVN8, A_GIVN9, A_GIVN10,
+    A_MINTR, A_MCOUS, A_MINSTR1, A_MINSTR, A_MLETS, A_MDIREC, A_MEND, A_HCIN, A_HCCNT, A_HCEND, A_KEYB1, A_KEYB2, A_KEYB3, A_KEYB4, A_KEYB5, A_KEYB6, A_KEYB7, selectSFX().src
+  ],
+  show_detailed_errors: true,
+  continue_after_error: true, // Don't stop on errors, continue to fallback trial
+  on_error: (src) => {
+    console.error('Preload failed for:', src);
+    // Track session-specific asset failures and their session1 fallbacks
+    if (/\/session\d+\//.test(src) && CURRENT_STUDY_SESSION !== 1) {
+      const session1Url = getSession1Asset(src);
+      failedSessionAssets.set(src, session1Url);
+      console.warn(`Session asset failed: ${src}, will fallback to: ${session1Url}`);
+    }
+  }
+};
+
+// Fallback trial to load session1 versions of failed assets
+const preloadFallback = {
+  type: jsPsychPreload,
+  images: function() {
+    // Only return session1 URLs for assets that failed
+    return Array.from(failedSessionAssets.values());
+  },
+  audio: [],
+  show_detailed_errors: true,
+  continue_after_error: true,
+  on_error: (src) => console.error('Session1 fallback also failed for:', src),
+  on_start: function() {
+    if (failedSessionAssets.size > 0) {
+      console.log(`Loading ${failedSessionAssets.size} session1 fallback assets...`);
+    }
+  },
+  on_finish: function() {
+    if (failedSessionAssets.size > 0) {
+      console.log(`Session1 fallback complete. Setting up URL redirection for ${failedSessionAssets.size} assets.`);
+      
+      // Override the Image constructor to automatically redirect failed URLs to session1 versions
+      const OriginalImage = window.Image;
+      const descriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+      const originalSetter = descriptor.set;
+      
+      window.Image = function(...args) {
+        const img = new OriginalImage(...args);
+        
+        Object.defineProperty(img, 'src', {
+          get: descriptor.get,
+          set: function(value) {
+            // Check if this URL failed and should use session1 fallback
+            if (failedSessionAssets.has(value)) {
+              const fallbackUrl = failedSessionAssets.get(value);
+              console.log(`Redirecting ${value} -> ${fallbackUrl}`);
+              originalSetter.call(this, fallbackUrl);
+            } else {
+              originalSetter.call(this, value);
+            }
+          },
+          configurable: true,
+          enumerable: true
+        });
+        
+        return img;
+      };
+      
+      // Preserve prototype chain
+      Object.setPrototypeOf(window.Image, OriginalImage);
+      Object.setPrototypeOf(window.Image.prototype, OriginalImage.prototype);
+    }
+  }
+};
+
+const intro = [
+  audioImageAuto(SL1, A_INTRO),
+];
+
+// Part A
+const part1 = [
+  audioImageAuto(SL1, A_DSTART),
+  audioImageAuto(SL3, A_OHNO),
+  audioImageAuto(SL4, A_KNOWS)
+];
+
+const get1 = readyInstruction(`<h3>Get a sheet of paper and number it 1</h3>`);
+const line_image  = audioImageWithNext(D1, A_LINE, {btn: NEXT_BTN});
+const line_decide = yesNoDecision(`<div>Did your child try to draw what was on screen?<br><small>(It does not have to match perfectly)</small></div>`, true, "decision_line");
+const line_yes = {
+  timeline: [ cameraPreviewTrial({delayMs:5000}), audioImageImmediate(READY_IMAGE, A_NICE, { btn: READY_BTN, btnPos: CENTER_POS }) ],
+  conditional_function: () => lastDecision('decision_line') === 1
+};
+const line_no = {
+  timeline: [ audioImageWithNext(TRY_IMAGE, A_HM, { btn: TRY_BTN, btnPos: 'right:24px; bottom:24px;' }) ],
+  conditional_function: () => lastDecision('decision_line') === 0
+};
+const line_loop = { timeline: [ line_image, line_decide, line_yes, line_no ], loop_function: () => lastDecision('decision_line') === 0 };
+
+const get2 = readyInstruction(`<h3>Get a sheet of paper and number it 2</h3>`);
+const dots_image  = audioImageWithNext(D2, A_DOT, {btn: NEXT_BTN});
+const dots_decide = yesNoDecision(`<div>Did your child try to draw what was on screen?<br><small>(It does not have to match perfectly)</small></div>`, true, "decision_dots");
+const dots_yes = {
+  timeline: [ cameraPreviewTrial({delayMs:5000}), audioImageImmediate(READY_IMAGE, A_NICE, { btn: READY_BTN, btnPos: CENTER_POS }) ],
+  conditional_function: () => lastDecision('decision_dots') === 1
+};
+const dots_no = {
+  timeline: [ audioImageWithNext(TRY_IMAGE, A_HM, { btn: TRY_BTN, btnPos: 'right:24px; bottom:24px;' }) ],
+  conditional_function: () => lastDecision('decision_dots') === 0
+};
+const dots_loop = { timeline: [ dots_image, dots_decide, dots_yes, dots_no ], loop_function: () => lastDecision('decision_dots') === 0 };
+
+const chooseStudySessionTrial = {
+  type: jsPsychSurveyText,
+  preamble: `
+    <div style="max-width:820px; margin:0 auto; text-align:left; line-height:1.4;">
+      <h2 style="margin:0 0 10px 0;">Choose Study Session</h2>
+      <p style="margin:0 0 8px 0;">Enter the session number you want to run (for example: 1, 2, 3...).</p>
+      <p style="margin:0; color:#444;">If left blank or invalid, the current session value will be kept.</p>
+    </div>
+  `,
+  button_label: "Continue",
+  questions: [
+    {
+      prompt: "Session number",
+      placeholder: String(CURRENT_STUDY_SESSION),
+      required: false
+    }
+  ],
+  on_finish: function(data) {
+    const raw = data?.response?.Q0;
+    const trimmed = String(raw ?? '').trim();
+    if (!trimmed) return;
+
+    const n = Number(trimmed);
+    if (!setStudySession(n)) {
+      alert('Please enter a whole number greater than or equal to 1.');
+    }
+  }
+};
+
+// Part 1 what's on this card or how many and parent child interaction 031026 changed to 5s
+const WOC_block = [
+audioImageWithNextLong(SETUP, A_SETUP, {text: "Parent: please take a moment to sit behind your child.", postDelayMs: 5000}),
+  audioImageWithNextLong(() => WOC_1, HowMany, {text: "Parent: please click the Next button when your child finishes counting. If your child does not respond right away, please feel free to repeat the instruction for them.", postDelayMs: 5000}), //audio: "Can you count? How many?"
+  audioImageWithNextLong(() => WOC_2, HowMany, {text: "Parent: please click the Next button when your child finishes counting. If your child does not respond right away, please feel free to repeat the instruction for them.", postDelayMs: 5000}), //audio: ""
+  audioImageWithNextLong(() => WOC_3, HowMany, {text: "Parent: please click the Next button when your child finishes counting. If your child does not respond right away, please feel free to repeat the instruction for them.", postDelayMs: 5000}), //audio: ""
+  audioImageWithNextLong(() => WOC_4, HowMany, {text: "Parent: please click the Next button when your child finishes counting. If your child does not respond right away, please feel free to repeat the instruction for them.", postDelayMs: 5000}), //audio: ""
+  audioImageWithNextLong(() => WOC_5, HowMany, {text: "Parent: please click the Next button when your child finishes counting. If your child does not respond right away, please feel free to repeat the instruction for them.", postDelayMs: 5000}), //audio: ""
+//add more trials potentially, or not lol
+];
+
+const PIC_block = [
+audioImageWithNextLong(() => PIC_1, WhatPic, {text: "Parent: please talk with your child as much as you can. Please click the Next button when it shows up.", postDelayMs: 180000}) //audio: maybe no audio??
+];
+
+
+// Part B
+
+const part2 = [
+  audioImageAuto(SL39, A_MINTR),
+  audioImageAuto(COUSIN, A_MCOUS)
+];
+
+// After cousin.png + audio and BEFORE Cousin 1
+const cousinKeyboardInstruction = [
+    audioImageAuto(KEYB11, A_KEYB1), //towel
+    audioImageAuto(KEYB51, A_MINSTR1), //whole task
+    audioImageAuto(KEYB21, A_KEYB2), //spacebar
+    audioImageAuto(KEYB31, A_KEYB6),
+    audioImageAuto(KEYB41, A_KEYB7)
+];
+
+const GOnGOKeyboardInstruction = [
+    audioImageAuto(KEYB11, A_KEYB1), //towel
+    audioImageAuto(COUSIN_HC, GNG_I_2), //whole task - needs to break down into showing shelf etc.
+    audioImageAuto(COUSIN_HT, GNG_I_2T), //whole task - needs to break down into showing shelf etc.
+    audioImageAuto(KEYB21, GNG_I_2K), //spacebar
+    audioImageAuto(COUSIN_HB, GNG_I_2B), //whole task - needs to break down into showing shelf etc.
+    audioImageAuto(COUSIN_T, GNG_I_3),
+    audioImageAuto(COUSIN_T, GNG_I_3B), //no tap
+    audioImageAuto(KEYB31, A_KEYB6)
+];
+
+const DROP_PLACEMENT_DEFAULTS = {
+  leftOverhangPx: 70,
+  rightOverhangPx: 70,
+  baselineCushionPx: -10
+};
+
+function getSpriteWidthPx(spriteEl, fallbackPx = 120) {
+  const width = Math.round(spriteEl?.getBoundingClientRect?.().width || 0);
+  return width > 0 ? width : fallbackPx;
+}
+
+function computeDropPlacement({
+  landEl,
+  spriteWidthPx,
+  index,
+  total,
+  leftOverhangPx = DROP_PLACEMENT_DEFAULTS.leftOverhangPx,
+  rightOverhangPx = DROP_PLACEMENT_DEFAULTS.rightOverhangPx,
+  baselineCushionPx = DROP_PLACEMENT_DEFAULTS.baselineCushionPx
+}) {
+  const landRect = landEl.getBoundingClientRect();
+  const widthPx = Math.max(1, Math.round(spriteWidthPx || 0));
+  const leftEdge = landRect.left + widthPx / 2 - leftOverhangPx;
+  const rightEdge = landRect.right - widthPx / 2 + rightOverhangPx;
+  const frac = total <= 1 ? 0.5 : index / (total - 1);
+  const centerX = leftEdge + frac * (rightEdge - leftEdge);
+  const bottomPx = Math.round(window.innerHeight - landRect.bottom + baselineCushionPx);
+
+  return {
+    leftPx: Math.round(centerX - widthPx / 2),
+    bottomPx,
+    widthPx
+  };
+}
+
+
+function cousinAudioTurtles(bg, audioURL, { tag = "cousin_UNTAGGED" } = {}) {
+  let _onKey = null;  let idx = 0;
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <div id="stage" style="position:fixed; inset:0; background:#000; overflow:hidden;">
+        <img id="bg" src="${bg}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1;">
+
+        <!-- FIXED-SIZE CONTAINER for the top-row turtles -->
+        <div id="rowWrap"
+             style="position:absolute; left:50%; transform:translateX(-50%); top:3.2vh;
+                    width:min(96vw, 1400px); z-index:3;">
+          <div id="row"
+               style="display:flex; justify-content:space-between; align-items:center; gap:28px;"></div>
+        </div>
+
+        <div id="land" style="position:absolute; left:50%; transform:translateX(-50%);
+             bottom:32vh; width:min(92vw, 1250px); height:14vh; z-index:2; background:transparent; border-radius:12px;"></div>
+
+        <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+             z-index:5; font-size:18px; background:rgba(0,0,0,.55); color:#fff; padding:12px 16px; border-radius:10px; text-align:center;">
+          press spacebar to move toy · trial will move on automatically for this part
+        </div>
+      </div>
+    `,
+    choices: [],
+    trial_duration: 3000, //jenny added to constrain timing
+    response_ends_trial: true,
+    extensions: recExt,
+    data: { game_tag: tag },
+    on_load: function(){
+        idx = 0;
+      // ---- one-shot audio (no replay on clicks) ----
+      stopAudio();
+      const a = audio(); let started=false;
+      const startOnce = ()=>{ if(started) return; a.src = audioURL; a.play().then(()=>started=true).catch(()=>{}); };
+      startOnce();
+      document.body.addEventListener('pointerdown', ()=>{ if(!started&&(a.paused||a.currentTime===0)) startOnce(); }, { once:true });
+
+      const stage   = document.getElementById('stage');
+      const rowWrap = document.getElementById('rowWrap');
+      const row     = document.getElementById('row');
+      const land    = document.getElementById('land');
+
+      // ---- build turtles on the TOP ROW ----
+      const N = 1, turtles = []; //--jenny edit: change to only 1 toy
+      for (let i=0;i<N;i++){
+        const t = document.createElement('img');
+        t.src = TURT;
+        // initial responsive width (we'll lock to pixels below)
+        t.style.width  = 'min(9vw, 140px)';
+        t.style.height = 'auto';
+        t.style.filter = 'drop-shadow(0 2px 2px rgba(0,0,0,.30))';
+        row.appendChild(t);
+        turtles.push(t);
+      }
+
+      // ---- LOCK the container and turtle sizes (prevent resize-driven scaling) ----
+      let TOP_W = null, LOCKED_WRAP_W = null;
+
+      function lockRowSize() {
+        // lock wrapper width in pixels (so space-between spacing stays fixed)
+        const wr = rowWrap.getBoundingClientRect();
+        LOCKED_WRAP_W = Math.round(wr.width);
+        rowWrap.style.width = `${LOCKED_WRAP_W}px`;
+
+        // measure the first turtle's pixel size and lock ALL turtles to that px width
+        const r0 = turtles[0].getBoundingClientRect();
+        TOP_W = Math.round(r0.width);
+        turtles.forEach(t => { t.style.width = `${TOP_W}px`; t.style.height = 'auto'; });
+
+        // also lock the visual height of rowWrap so it doesn't collapse/shift
+        rowWrap.style.height = `${Math.max(1, Math.round(r0.height))}px`;
+      }
+
+      // lock after layout paints
+      requestAnimationFrame(lockRowSize);
+
+      requestAnimationFrame(lockRowSize);
+
+      let landedClones = [];
+
+      function placeOne(){
+        if (idx >= N) return;
+
+        const topWidthPx = TOP_W ?? getSpriteWidthPx(turtles[0]);
+        const placement = computeDropPlacement({
+          landEl: land,
+          spriteWidthPx: topWidthPx,
+          index: idx,
+          total: N,
+          baselineCushionPx: DROP_PLACEMENT_DEFAULTS.baselineCushionPx - 30
+        });
+
+        // create CLONE for landing; keep top-row turtle hidden to avoid afterimage
+        const c = document.createElement('img');
+        c.src = TURT;
+        c.style.position = 'fixed';
+        c.style.zIndex   = '4';
+        c.style.left     = `${placement.leftPx}px`;
+        c.style.bottom   = `${placement.bottomPx}px`;
+        c.style.width    = `${placement.widthPx}px`;
+        c.style.height   = 'auto';
+        c.style.filter   = 'drop-shadow(0 2px 2px rgba(0,0,0,.30))';
+        stage.appendChild(c);
+        landedClones.push(c);
+
+        turtles[idx].style.visibility = 'hidden';
+
+        idx++;
+        try{ const sfx=selectSFX(); sfx.currentTime=0; sfx.play().catch(()=>{});}catch{}
+      }
+
+      function resetAll(){
+        // remove landing clones
+        landedClones.forEach(el => el.remove());
+        landedClones = [];
+        // restore all top-row turtles (unchanged px size)
+        turtles.forEach(t=>{
+          t.style.visibility = '';
+          t.style.position   = '';
+          t.style.left       = '';
+          t.style.top        = '';
+          t.style.zIndex     = '';
+          t.style.transform  = '';
+          t.style.transformOrigin = '';
+        });
+        idx=0;
+      }
+
+      function onKey(e){
+        if(e.repeat) return;
+        if(e.key===' '||e.code==='Space'){ e.preventDefault(); placeOne(); }
+        else if(e.key==='r'||e.key==='R'){ resetAll(); }
+        else if(e.key==='q'||e.key==='Q'){ document.removeEventListener('keydown', onKey); jsPsych.finishTrial({ placements: idx, game_tag: tag }); }
+      }
+      _onKey = onKey;
+      document.addEventListener('keydown', onKey);
+    },
+    on_finish: function() {
+      stopAudio();
+      jsPsych.data.addDataToLastTrial({ placements: idx, game_tag: tag });
+      if (_onKey) { document.removeEventListener('keydown', _onKey); _onKey = null; }
+    }
+  };
+}
+
+// Cousins sequence per instructions:
+// - After M_intro -> cousin.png -> M_cousins
+// - Keyboard instruction PNG + A_MINSTR1
+// - Cousin 1: play A_MINSTR, then interactive turtles
+// - "Let's do some more!" instruction (A_MLETS) once, then Cousins 2–7 (A_MDIREC)
+const cousins_block = [
+  // instruction,
+  cousinAudioTurtles(SL67, A_MINSTR),
+
+  // Single instruction panel AFTER Cousin 1, before Cousin 2
+  readyInstructionAudio(`<h3>Let’s do some more!</h3>`, A_MLETS),
+
+  // Cousins 2–7 directly (no repeating instruction screens)
+  cousinAudioTurtles(SL68, A_MDIREC),
+  cousinAudioTurtles(SL69, A_MDIREC),
+  cousinAudioTurtles(SL70, A_MDIREC),
+  cousinAudioTurtles(SL71, A_MDIREC),
+  cousinAudioTurtles(SL72, A_MDIREC),
+  cousinAudioTurtles(COUSIN7, A_MDIREC)
+];
+
+
+
+
+// ---------------- PART C ----------------
+const part4 = [
+  audioImageAuto(SL50, A_GIVN)
+];
+
+// After cousin.png + audio and BEFORE Cousin 1
+//you can get rid of this part vvv
+
+// PRACTICE (Goldfish, N=5)
+function cousinAudioPracticeGoldfish(bg, audioURL){
+  let _onKey = null;
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <div id="stage" style="position:fixed; inset:0; background:#000; overflow:hidden;">
+        <img id="bg" src="${bg}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1;">
+        <div id="rowWrap" style="position:absolute; left:50%; transform:translateX(-50%); top:3.2vh; width:min(96vw,1400px); z-index:3;">
+          <div id="row" style="display:flex; justify-content:space-between; align-items:center; gap:28px;"></div>
+        </div>
+        <div id="land" style="position:absolute; left:50%; transform:translateX(-50%); bottom:32vh; width:min(92vw,1250px); height:14vh; z-index:2; background:transparent; border-radius:12px;"></div>
+        <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:5; font-size:18px; background:rgba(0,0,0,.55); color:#fff; padding:12px 16px; border-radius:10px; text-align:center;">
+          press spacebar to move toy · q to move on · r to reset
+        </div>
+      </div>
+    `,
+    choices: [],
+    extensions: recExt,
+    on_load: function(){
+      // one-shot audio
+      stopAudio(); const a = audio(); let started=false;
+      const startOnce=()=>{ if(started) return; a.src=audioURL; a.play().then(()=>started=true).catch(()=>{}); };
+      startOnce(); document.body.addEventListener('pointerdown', ()=>{ if(!started&&(a.paused||a.currentTime===0)) startOnce(); }, {once:true});
+
+      const stage   = document.getElementById('stage');
+      const rowWrap = document.getElementById('rowWrap');
+      const row     = document.getElementById('row');
+      const land    = document.getElementById('land');
+
+      // Top-bar GOLDISH (shelf)
+      const N = 5, goldfish = [];
+      for (let i=0;i<N;i++){
+        const t=document.createElement('img'); t.src=GLDFSH;
+        t.style.width='min(9vw,140px)'; t.style.height='auto';
+        t.style.filter='drop-shadow(0 2px 2px rgba(0,0,0,.30))';
+        row.appendChild(t); goldfish.push(t);
+      }
+
+      // ---- LOCK container & sprite size (px) ----
+      let TOP_W=null, LOCKED_WRAP_W=null;
+      function lockRowSize(){
+        const wr = rowWrap.getBoundingClientRect();
+        LOCKED_WRAP_W = Math.round(wr.width);
+        rowWrap.style.width = `${LOCKED_WRAP_W}px`;
+        const r0 = goldfish[0].getBoundingClientRect();
+        TOP_W = Math.round(r0.width);
+        goldfish.forEach(t=>{ t.style.width=`${TOP_W}px`; t.style.height='auto'; });
+        rowWrap.style.height = `${Math.max(1, Math.round(r0.height))}px`;
+      }
+      requestAnimationFrame(lockRowSize);
+
+      let idx=0; let landedClones=[];
+      function placeOne(){
+        if(idx>=N) return;
+        const topWidthPx = TOP_W ?? getSpriteWidthPx(goldfish[0]);
+        const placement = computeDropPlacement({
+          landEl: land,
+          spriteWidthPx: topWidthPx,
+          index: idx,
+          total: N,
+          baselineCushionPx: DROP_PLACEMENT_DEFAULTS.baselineCushionPx - 15
+        });
+        const c = document.createElement('img');
+        c.src=GLDFSH; c.style.position='fixed'; c.style.zIndex='4';
+        c.style.left=`${placement.leftPx}px`;
+        c.style.bottom =`${placement.bottomPx}px`;
+        c.style.width=`${placement.widthPx}px`; c.style.height='auto';
+        c.style.filter='drop-shadow(0 2px 2px rgba(0,0,0,.30))';
+        stage.appendChild(c); landedClones.push(c);
+        goldfish[idx].style.visibility='hidden';
+        idx++; try{ const sfx=selectSFX(); sfx.currentTime=0; sfx.play().catch(()=>{});}catch{}
+      }
+
+      function resetAll(){
+        landedClones.forEach(el=>el.remove()); landedClones=[];
+        goldfish.forEach(t=>{ t.style.visibility=''; t.style.position=''; t.style.left=''; t.style.top='';
+          t.style.zIndex=''; t.style.transform=''; t.style.transformOrigin=''; });
+        idx=0;
+      }
+
+      function onKey(e){
+        if(e.repeat) return;
+        if(e.key===' '||e.code==='Space'){ e.preventDefault(); placeOne(); }
+        else if(e.key==='r'||e.key==='R'){ resetAll(); }
+        else if(e.key==='q'||e.key==='Q'){ document.removeEventListener('keydown', onKey); jsPsych.finishTrial(); }
+      }
+      _onKey = onKey;
+      document.addEventListener('keydown', onKey);
+    },
+    on_finish: function() {
+      stopAudio();
+      if (_onKey) { document.removeEventListener('keydown', _onKey); _onKey = null; }
+    }
+  };
+}
+
+// Helper: track last correctness by trial_tag
+function lastPracticeCorrect(tag){
+  const v = jsPsych.data.get().filter({ trial_tag: tag }).last(1).values()[0];
+  return v ? !!v.correct : null;
+}
+
+// Go/No-Go practice trial with single toy; logs whether space was pressed in 3s window
+function goNoGoPracticeTrial(bg, expectPress, { tag } = {}) {
+  let _onKey = null, pressed = false;
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <div id="stage" style="position:fixed; inset:0; background:#000; overflow:hidden;">
+        <img id="bg" src="${bg}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1;">
+        <div id="rowWrap" style="position:absolute; left:50%; transform:translateX(-50%); top:3.2vh; width:min(96vw,1400px); z-index:3;">
+          <div id="row" style="display:flex; justify-content:center; align-items:center; gap:28px;"></div>
+        </div>
+        <div id="land" style="position:absolute; left:50%; transform:translateX(-50%); bottom:32vh; width:min(92vw,1250px); height:14vh; z-index:2; background:transparent; border-radius:12px;"></div>
+        <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:5; font-size:18px; background:rgba(0,0,0,.55); color:#fff; padding:12px 16px; border-radius:10px; text-align:center;">
+          press spacebar to move toy
+        </div>
+      </div>
+    `,
+    choices: [],
+    trial_duration: 3000,
+    response_ends_trial: false,
+    data: { trial_tag: tag, expectPress },
+    extensions: recExt,
+    on_load: function(){
+      pressed = false; // reset per iteration when reused in a loop
+      stopAudio();
+
+      const stage   = document.getElementById('stage');
+      const rowWrap = document.getElementById('rowWrap');
+      const row     = document.getElementById('row');
+      const land    = document.getElementById('land');
+
+      // Single turtle on top shelf
+      const t = document.createElement('img');
+      t.src = TURT;
+      t.style.width = 'min(9vw,140px)';
+      t.style.height = 'auto';
+      t.style.filter = 'drop-shadow(0 2px 2px rgba(0,0,0,.30))';
+      row.appendChild(t);
+
+      // Lock container sizing for stability
+      let TOP_W = null, LOCKED_WRAP_W = null;
+      function lockRowSize(){
+        const wr = rowWrap.getBoundingClientRect();
+        LOCKED_WRAP_W = Math.round(wr.width);
+        rowWrap.style.width = `${LOCKED_WRAP_W}px`;
+        const r0 = t.getBoundingClientRect();
+        TOP_W = Math.round(r0.width);
+        t.style.width = `${TOP_W}px`;
+        rowWrap.style.height = `${Math.max(1, Math.round(r0.height))}px`;
+      }
+      requestAnimationFrame(lockRowSize);
+
+      let landed=null;
+      function placeOne(){
+        if(landed) return;
+        const topWidthPx = TOP_W ?? getSpriteWidthPx(t);
+        const placement = computeDropPlacement({
+          landEl: land,
+          spriteWidthPx: topWidthPx,
+          index: 0,
+          total: 1,
+          baselineCushionPx: DROP_PLACEMENT_DEFAULTS.baselineCushionPx - 20
+        });
+        const c=document.createElement('img');
+        c.src=TURT; c.style.position='fixed'; c.style.zIndex='4';
+        c.style.left=`${placement.leftPx}px`;
+        c.style.bottom=`${placement.bottomPx}px`;
+        c.style.transform='translateY(15px)';
+        c.style.width=`${placement.widthPx}px`; c.style.height='auto'; c.style.filter='drop-shadow(0 2px 2px rgba(0,0,0,.30))';
+        stage.appendChild(c); landed=c;
+        t.style.visibility='hidden';
+        try{ const sfx=selectSFX(); sfx.currentTime=0; sfx.play().catch(()=>{});}catch{}
+      }
+
+      function resetAll(){
+        if(landed){ landed.remove(); landed=null; }
+        t.style.visibility='';
+      }
+
+      function onKey(e){
+        if(e.repeat) return;
+        if(e.key===' '||e.code==='Space'){ e.preventDefault(); pressed=true; placeOne(); }
+        else if(e.key==='r'||e.key==='R'){ resetAll(); }
+        else if(e.key==='q'||e.key==='Q'){ document.removeEventListener('keydown', onKey); jsPsych.finishTrial(); }
+      }
+      _onKey = onKey;
+      document.addEventListener('keydown', onKey);
+    },
+    on_finish: function(data) {
+      stopAudio();
+      if (_onKey) { document.removeEventListener('keydown', _onKey); _onKey = null; }
+      data.pressedSpace = pressed;
+      data.correct = expectPress ? pressed : !pressed;
+    }
+  };
+}
+
+// Wrap a practice trial with feedback + repeat-on-error
+function goNoGoPracticeWithFeedback({ bg, expectPress, tag, msgCorrect, msgIncorrect, audioCorrect, audioWrong }) {
+  const trial = goNoGoPracticeTrial(bg, expectPress, { tag });
+
+  const feedbackCorrect = readyInstructionAudio(`<h3>${msgCorrect}</h3>`, audioCorrect);
+  const feedbackIncorrect = readyInstructionAudio(`<h3>${msgIncorrect}</h3>`, audioWrong);
+
+  return {
+    timeline: [
+      trial,
+      {
+        timeline: [ feedbackCorrect ],
+        conditional_function: () => lastPracticeCorrect(tag) === true
+      },
+      {
+        timeline: [ feedbackIncorrect ],
+        conditional_function: () => lastPracticeCorrect(tag) === false
+      }
+    ],
+    loop_function: () => lastPracticeCorrect(tag) === false
+  };
+}
+
+// GOLDFISH (N=12)
+function cousinAudioGoldfish(bg, audioURL){
+  let _onKey = null, _landObserver = null;
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+       <div id="stage" style="position:fixed; inset:0; background:#000; overflow:hidden;">
+        <img id="bg" src="${bg}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1;">
+        <!-- TOP BAR: shift slightly left + even spacing -->
+        <div id="row"
+             style="position:absolute; left:50%; transform:translateX(-52%); top:3.2vh;
+                    width:min(96vw, 1400px); padding:0 min(2vw,24px);
+                    display:flex; justify-content:space-evenly; align-items:center;
+                    gap:min(2.2vw,22px); z-index:3;"></div>
+        <div id="land" style="position:absolute; left:50%; transform:translateX(-50%); bottom:32vh; width:min(92vw, 1250px); height:14vh; z-index:2; background:transparent; border-radius:12px;"></div>
+        <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:5; font-size:18px; background:rgba(0,0,0,.55); color:#fff; padding:12px 16px; border-radius:10px; text-align:center;">
+          press spacebar to move toy · q to move on · r to reset
+        </div>
+      </div>
+    `,
+    choices: [],
+    extensions: recExt,
+    on_load: function(){
+      stopAudio(); const a=audio(); let started=false;
+      const startOnce=()=>{ if(started) return; a.src=audioURL; a.play().then(()=>started=true).catch(()=>{}); };
+      startOnce(); document.body.addEventListener('pointerdown', ()=>{ if(!started&&(a.paused||a.currentTime===0)) startOnce(); }, {once:true});
+
+      const stage=document.getElementById('stage');
+      const rowWrap=document.getElementById('rowWrap');
+      const row=document.getElementById('row');
+      const land=document.getElementById('land');
+
+      const N=12, goldfish=[];
+      for(let i=0;i<N;i++){
+        const t=document.createElement('img'); t.src=GLDFSH;
+        t.style.width='min(9vw,140px)'; t.style.height='auto';
+        t.style.filter='drop-shadow(0 2px 2px rgba(0,0,0,.30))';
+        row.appendChild(t); goldfish.push(t);
+      }
+
+      let TOP_W=null, TOP_H=null, LOCKED_WRAP_W=null;
+      function lockRowSize(){
+        const wr=rowWrap.getBoundingClientRect();
+        LOCKED_WRAP_W=Math.round(wr.width); rowWrap.style.width=`${LOCKED_WRAP_W}px`;
+        const r0=goldfish[0].getBoundingClientRect(); TOP_W=Math.round(r0.width); TOP_H=Math.round(r0.height);
+        goldfish.forEach(t=>{ t.style.width=`${TOP_W}px`; t.style.height='auto'; });
+        rowWrap.style.height = `${Math.max(1, Math.round(r0.height))}px`;
+      }
+      requestAnimationFrame(lockRowSize);
+
+      const LAND_SCALE=1.00, LEFT_OVERHANG_PX=70, RIGHT_OVERHANG_PX=70, BASELINE_CUSHION=-10;
+      let geom=null;
+      function computeGeom(){
+        const lr=land.getBoundingClientRect();
+        const effW=(TOP_W??100)*LAND_SCALE, effH=(TOP_H??100)*LAND_SCALE;
+        const leftEdge=lr.left+effW/2-LEFT_OVERHANG_PX, rightEdge=lr.right-effW/2+RIGHT_OVERHANG_PX;
+        const baselineTop=lr.bottom-effH-BASELINE_CUSHION;
+        geom={leftEdge,rightEdge,baselineTop,effW,effH};
+      }
+      requestAnimationFrame(()=>{ lockRowSize(); computeGeom(); });
+      const landObserver=new ResizeObserver(()=>computeGeom()); landObserver.observe(land);
+
+      let idx=0; let landedClones=[];
+      function placeOne(){
+        if(idx>=N) return; if(!geom) computeGeom();
+        const {leftEdge,rightEdge,baselineTop,effW}=geom;
+        const frac=(N<=1)?0.5:(idx/(N-1)); const centerX=leftEdge+frac*(rightEdge-leftEdge);
+        const c=document.createElement('img'); c.src=GLDFSH; c.style.position='fixed'; c.style.zIndex='4';
+        c.style.left=`${Math.round(centerX-effW/2)}px`; c.style.top=`${Math.round(baselineTop)}px`;
+        c.style.width=`${Math.round(effW)}px`; c.style.height='auto'; c.style.filter='drop-shadow(0 2px 2px rgba(0,0,0,.30))';
+        stage.appendChild(c); landedClones.push(c);
+        goldfish[idx].style.visibility='hidden';
+        idx++; try{ const sfx=selectSFX(); sfx.currentTime=0; sfx.play().catch(()=>{});}catch{}
+      }
+
+      function resetAll(){
+        landedClones.forEach(el=>el.remove()); landedClones=[];
+        goldfish.forEach(t=>{ t.style.visibility=''; t.style.position=''; t.style.left=''; t.style.top=''; t.style.zIndex=''; t.style.transform=''; t.style.transformOrigin=''; });
+        idx=0;
+      }
+
+      function onKey(e){
+        if(e.repeat) return;
+        if(e.key===' '||e.code==='Space'){ e.preventDefault(); placeOne(); }
+        else if(e.key==='r'||e.key==='R'){ resetAll(); }
+        else if(e.key==='q'||e.key==='Q'){ document.removeEventListener('keydown', onKey); jsPsych.finishTrial(); }
+      }
+      _onKey = onKey;
+      document.addEventListener('keydown', onKey);
+    },
+    on_finish: function() {
+      stopAudio();
+      if (_onKey) { document.removeEventListener('keydown', _onKey); _onKey = null; }
+      if (_landObserver) { _landObserver.disconnect(); _landObserver = null; }
+    }
+  };
+}
+
+// WHALES (N=12)
+function cousinAudioWhales(bg, audioURL){
+  let _onKey = null, _landObserver = null;
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <div id="stage" style="position:fixed; inset:0; background:#000; overflow:hidden;">
+        <img id="bg" src="${bg}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1;">
+        <!-- TOP BAR: shift slightly left + even spacing -->
+        <div id="row"
+             style="position:absolute; left:50%; transform:translateX(-52%); top:3.2vh;
+                    width:min(96vw, 1400px); padding:0 min(2vw,24px);
+                    display:flex; justify-content:space-evenly; align-items:center;
+                    gap:min(2.2vw,22px); z-index:3;"></div>
+        <div id="land" style="position:absolute; left:50%; transform:translateX(-50%); bottom:32vh; width:min(92vw, 1250px); height:14vh; z-index:2; background:transparent; border-radius:12px;"></div>
+        <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:5; font-size:18px; background:rgba(0,0,0,.55); color:#fff; padding:12px 16px; border-radius:10px; text-align:center;">
+          press spacebar to move toy · q to move on · r to reset
+        </div>
+      </div>
+    `,
+    choices: [],
+    extensions: recExt,
+    on_load: function(){
+      stopAudio(); const a=audio(); let started=false;
+      const startOnce=()=>{ if(started) return; a.src=audioURL; a.play().then(()=>started=true).catch(()=>{}); };
+      startOnce(); document.body.addEventListener('pointerdown', ()=>{ if(!started&&(a.paused||a.currentTime===0)) startOnce(); }, {once:true});
+
+      const stage=document.getElementById('stage');
+      const rowWrap=document.getElementById('rowWrap');
+      const row=document.getElementById('row');
+      const land=document.getElementById('land');
+
+      const N=12, whale=[];
+      for(let i=0;i<N;i++){
+        const t=document.createElement('img'); t.src=WHL;
+        t.style.width='min(9vw,140px)'; t.style.height='auto';
+        t.style.filter='drop-shadow(0 2px 2px rgba(0,0,0,.30))';
+        row.appendChild(t); whale.push(t);
+      }
+
+      let TOP_W=null, TOP_H=null, LOCKED_WRAP_W=null;
+      function lockRowSize(){
+        const wr=rowWrap.getBoundingClientRect();
+        LOCKED_WRAP_W=Math.round(wr.width); rowWrap.style.width=`${LOCKED_WRAP_W}px`;
+        const r0=whale[0].getBoundingClientRect(); TOP_W=Math.round(r0.width); TOP_H=Math.round(r0.height);
+        whale.forEach(t=>{ t.style.width=`${TOP_W}px`; t.style.height='auto'; });
+        rowWrap.style.height = `${Math.max(1, Math.round(r0.height))}px`;
+      }
+      requestAnimationFrame(lockRowSize);
+
+      const LAND_SCALE=1.00, LEFT_OVERHANG_PX=70, RIGHT_OVERHANG_PX=70, BASELINE_CUSHION=-10;
+      let geom=null;
+      function computeGeom(){
+        const lr=land.getBoundingClientRect();
+        const effW=(TOP_W??100)*LAND_SCALE, effH=(TOP_H??100)*LAND_SCALE;
+        const leftEdge=lr.left+effW/2-LEFT_OVERHANG_PX, rightEdge=lr.right-effW/2+RIGHT_OVERHANG_PX;
+        const baselineTop=lr.bottom-effH-BASELINE_CUSHION;
+        geom={leftEdge,rightEdge,baselineTop,effW,effH};
+      }
+      requestAnimationFrame(()=>{ lockRowSize(); computeGeom(); });
+      const landObserver=new ResizeObserver(()=>computeGeom()); landObserver.observe(land);
+
+      let idx=0; let landedClones=[];
+      function placeOne(){
+        if(idx>=N) return; if(!geom) computeGeom();
+        const {leftEdge,rightEdge,baselineTop,effW}=geom;
+        const frac=(N<=1)?0.5:(idx/(N-1)); const centerX=leftEdge+frac*(rightEdge-leftEdge);
+        const c=document.createElement('img'); c.src=WHL; c.style.position='fixed'; c.style.zIndex='4';
+        c.style.left=`${Math.round(centerX-effW/2)}px`; c.style.top=`${Math.round(baselineTop)}px`;
+        c.style.width=`${Math.round(effW)}px`; c.style.height='auto'; c.style.filter='drop-shadow(0 2px 2px rgba(0,0,0,.30))';
+        stage.appendChild(c); landedClones.push(c);
+        whale[idx].style.visibility='hidden';
+        idx++; try{ const sfx=selectSFX(); sfx.currentTime=0; sfx.play().catch(()=>{});}catch{}
+      }
+
+      function resetAll(){
+        landedClones.forEach(el=>el.remove()); landedClones=[];
+        whale.forEach(t=>{ t.style.visibility=''; t.style.position=''; t.style.left=''; t.style.top=''; t.style.zIndex=''; t.style.transform=''; t.style.transformOrigin=''; });
+        idx=0;
+      }
+
+      function onKey(e){
+        if(e.repeat) return;
+        if(e.key===' '||e.code==='Space'){ e.preventDefault(); placeOne(); }
+        else if(e.key==='r'||e.key==='R'){ resetAll(); }
+        else if(e.key==='q'||e.key==='Q'){ document.removeEventListener('keydown', onKey); jsPsych.finishTrial(); }
+      }
+      _onKey = onKey;
+      document.addEventListener('keydown', onKey);
+    },
+    on_finish: function() {
+      stopAudio();
+      if (_onKey) { document.removeEventListener('keydown', _onKey); _onKey = null; }
+      if (_landObserver) { _landObserver.disconnect(); _landObserver = null; }
+    }
+  };
+}
+
+// PENGUINS (N=12)
+function cousinAudioPenguins(bg, audioURL, { tag = "penguin_UNTAGGED" } = {}) {
+  let _onKey = null;
+  const givnAmount = GIVN_AMOUNT_BY_AUDIO[audioURL];
+  const givnReminder = Number.isFinite(givnAmount)
+    ? `<div style="font-size:18px; background:rgba(0,0,0,.55); color:#fff; padding:12px 16px; border-radius:10px; text-align:center;">can you give ${givnAmount}?</div>`
+    : "";
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <div id="stage" style="position:fixed; inset:0; background:#000; overflow:hidden;">
+        <img id="bg" src="${bg}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1;">
+        <div id="rowWrap" style="position:absolute; left:50%; transform:translateX(-50%); top:3.2vh; width:min(96vw,1400px); z-index:3;">
+          <div id="row" style="display:flex; justify-content:space-between; align-items:center; gap:28px;"></div>
+        </div>
+        <div id="land" style="position:absolute; left:50%; transform:translateX(-50%); bottom:32vh; width:min(92vw,1250px); height:14vh; z-index:2; background:transparent; border-radius:12px;"></div>
+        <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:5; display:flex; flex-direction:column; align-items:center; gap:20px;">
+          ${givnReminder}
+          <div style="font-size:18px; background:rgba(0,0,0,.55); color:#fff; padding:12px 16px; border-radius:10px; text-align:center;">
+            press spacebar to move toy · q to move on · r to reset
+          </div>
+        </div>
+      </div>
+    `,
+    choices: [],
+    extensions: recExt,
+    data: { game_tag: tag },
+    on_load: function(){
+      stopAudio(); const a=audio(); let started=false;
+      const startOnce=()=>{ if(started) return; a.src=audioURL; a.play().then(()=>started=true).catch(()=>{}); };
+      startOnce(); document.body.addEventListener('pointerdown', ()=>{ if(!started&&(a.paused||a.currentTime===0)) startOnce(); }, {once:true});
+
+      const stage=document.getElementById('stage');
+      const rowWrap=document.getElementById('rowWrap');
+      const row=document.getElementById('row');
+      const land=document.getElementById('land');
+
+      const N=12, penguin=[];
+      for(let i=0;i<N;i++){
+        const t=document.createElement('img'); t.src=PENG;
+        t.style.width='min(9vw,140px)'; t.style.height='auto';
+        t.style.filter='drop-shadow(0 2px 2px rgba(0,0,0,.30))';
+        row.appendChild(t); penguin.push(t);
+      }
+
+      let TOP_W=null, LOCKED_WRAP_W=null;
+      function lockRowSize(){
+        const wr=rowWrap.getBoundingClientRect();
+        LOCKED_WRAP_W=Math.round(wr.width); rowWrap.style.width=`${LOCKED_WRAP_W}px`;
+        const r0=penguin[0].getBoundingClientRect(); TOP_W=Math.round(r0.width);
+        penguin.forEach(t=>{ t.style.width=`${TOP_W}px`; t.style.height='auto'; });
+        rowWrap.style.height = `${Math.max(1, Math.round(r0.height))}px`;
+      }
+      requestAnimationFrame(lockRowSize);
+      requestAnimationFrame(lockRowSize);
+
+      let idx=0; let landedClones=[];
+      function placeOne(){
+        if(idx>=N) return;
+        const topWidthPx = TOP_W ?? getSpriteWidthPx(penguin[0]);
+        const placement = computeDropPlacement({
+          landEl: land,
+          spriteWidthPx: topWidthPx,
+          index: idx,
+          total: N
+        });
+        const c=document.createElement('img'); c.src=PENG; c.style.position='fixed'; c.style.zIndex='4';
+        c.style.left=`${placement.leftPx}px`;
+        c.style.bottom=`${placement.bottomPx}px`;
+        c.style.width=`${placement.widthPx}px`; c.style.height='auto'; c.style.filter='drop-shadow(0 2px 2px rgba(0,0,0,.30))';
+        stage.appendChild(c); landedClones.push(c);
+        penguin[idx].style.visibility='hidden';
+        idx++; try{ const sfx=selectSFX(); sfx.currentTime=0; sfx.play().catch(()=>{});}catch{}
+      }
+
+      function resetAll(){
+        landedClones.forEach(el=>el.remove()); landedClones=[];
+        penguin.forEach(t=>{ t.style.visibility=''; t.style.position=''; t.style.left=''; t.style.top=''; t.style.zIndex=''; t.style.transform=''; t.style.transformOrigin=''; });
+        idx=0;
+      }
+
+      function onKey(e){
+        if(e.repeat) return;
+        if(e.key===' '||e.code==='Space'){ e.preventDefault(); placeOne(); }
+        else if(e.key==='r'||e.key==='R'){ resetAll(); }
+        else if(e.key==='q'||e.key==='Q'){ document.removeEventListener('keydown', onKey); jsPsych.finishTrial({ placements: idx, game_tag: tag }); }
+      }
+      _onKey = onKey;
+      document.addEventListener('keydown', onKey);
+    },
+    on_finish: function() {
+      stopAudio();
+      if (_onKey) { document.removeEventListener('keydown', _onKey); _onKey = null; }
+    }
+  };
+}
+
+const GOnGO_block = [
+  // keyboard instructions
+  GOnGOKeyboardInstruction,
+  cousinAudioPracticeGoldfish(SL66, A_NSPBR),
+
+  // instructions for go no go - only give toys to cousin X, but not Y etc.need to add timing component
+  readyInstructionAudio(`<h3>Remember, only tap to move the turtle toy when you see somebody! Do not tap anything when there is nobody!</h3>`, GNG_1),
+
+  // Practice (repeat until correct): C, BG, C, BG
+  goNoGoPracticeWithFeedback({
+    bg: COUSIN_C,
+    expectPress: true,
+    tag: 'gng_prac1',
+    msgCorrect: "Yay! You moved the toy! Remember, if someone shows up, tap the spacebar to give them the toy. Let's do some more!",
+    msgIncorrect: "Uh oh, you did not move the toy! Remember, if someone shows up, tap the spacebar to give them the toy. Let's try again!",
+    audioCorrect: GO_C,
+    audioWrong: GO_W
+  }),
+  goNoGoPracticeWithFeedback({
+    bg: COUSIN_BG,
+    expectPress: false,
+    tag: 'gng_prac2',
+    msgCorrect: "Yay! You did not move the toy! Remember, if nobody shows up, do not tap the spacebar and leave the toy on the shelf. Let's do some more!",
+    msgIncorrect: "Uh oh, you moved the toy! Remember, if nobody shows up, do not tap the spacebar and leave the toy on the shelf. Let's try again!",
+    audioCorrect: NOGO_C,
+    audioWrong: NOGO_W
+  }),
+
+
+  // modify to work for go no go, maybe only give cousin A a toy, but no toy for cousin B for now. can modiy later
+  cousinAudioTurtles(COUSIN_C, POOF, { tag: "cousin_1" }),
+  cousinAudioTurtles(COUSIN_C, POOF, { tag: "cousin_2" }),
+  cousinAudioTurtles(COUSIN_C, POOF, { tag: "cousin_3" }),
+  cousinAudioTurtles(COUSIN_BG, POOF, { tag: "cousin_4" }),
+  cousinAudioTurtles(COUSIN_C, POOF, { tag: "cousin_5" }),
+  cousinAudioTurtles(COUSIN_C, POOF, { tag: "cousin_6" }),
+  cousinAudioTurtles(COUSIN_BG, POOF, { tag: "cousin_7" }),
+  cousinAudioTurtles(COUSIN_C, POOF, { tag: "cousin_8" }),
+  cousinAudioTurtles(COUSIN_C, POOF, { tag: "cousin_9" }),
+  cousinAudioTurtles(COUSIN_C, POOF, { tag: "cousin_10" }),
+  cousinAudioTurtles(COUSIN_BG, POOF, { tag: "cousin_11" }),
+  cousinAudioTurtles(COUSIN_C, POOF, { tag: "cousin_12" })
+
+];
+
+
+const GIVNKeyboardInstruction = [
+    audioImageAuto(KEYB11, A_KEYB1), //towel
+    audioImageAuto(KEYB21, GNG_I_2K), //spacebar
+    audioImageAuto(KEYB31, A_KEYB6),
+    audioImageAuto(KEYB41, A_KEYB7)
+];
+
+// Cousins sequence per instructions:
+// - After M_intro -> cousin.png -> M_cousins
+// - Keyboard instruction PNG + A_MINSTR1
+// - Cousin 1: play A_MINSTR, then interactive turtles
+// - "Let's do some more!" instruction (A_MLETS) once, then Cousins 2–7 (A_MDIREC)
+const GIVN_block = [
+  // Cousin 1 (no "let's do some more" before it)
+  GIVNKeyboardInstruction,
+      cousinAudioPenguins(SL66, A_GIVN1, { tag: "penguin_1" }),
+      cousinAudioPenguins(SL66, A_GIVN6, { tag: "penguin_2" }),
+      cousinAudioPenguins(SL66, A_GIVN2, { tag: "penguin_3" }),
+      cousinAudioPenguins(SL66, A_GIVN10, { tag: "penguin_4" }),
+      cousinAudioPenguins(SL66, A_GIVN8, { tag: "penguin_5" }),
+      cousinAudioPenguins(SL66, A_GIVN3, { tag: "penguin_6" }),
+      cousinAudioPenguins(SL66, A_GIVN9, { tag: "penguin_7" }),
+      cousinAudioPenguins(SL66, A_GIVN4, { tag: "penguin_8" }),
+      cousinAudioPenguins(SL66, A_GIVN7, { tag: "penguin_9" }),
+      cousinAudioPenguins(SL66, A_GIVN5, { tag: "penguin_10" })
+];
+
+
+// ---------------- CLOSING ----------------
+
+const closing = [
+  imageWithTimedNext(QUAL_IMG, 15000),
+  audioImageAuto(SL53, A_NEWOUT) // no Next button
+];
+// ---------------- TIMELINE ----------------
+
+// ---- Official CHS Exit Survey (built-in plugin) ----
+// Docs: https://lookit.readthedocs.io/projects/chs-jspsych/en/latest/surveys/#exit-survey
+// ---- CHS Exit Survey (no-audio guaranteed) ----
+const lookitExitSurvey = chsSurvey
+  ? {
+      type: chsSurvey.ExitSurveyPlugin,
+
+      // (Optional) knobs — keep/remove as you like
+      locale: "en-US",
+      show_databrary_options: true,
+      include_withdrawal_example: true,
+      private_level_only: false,
+      additional_video_privacy_text: "",
+
+      on_load: () => {
+        // hard-stop anything that might still be around
+        try {
+          stopAudio();
+          const a = audio();
+          a.src = "";
+          a.onended = null;
+          a.onerror = null;
+        } catch {}
+      }
+    }
+  : {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: `
+        <div style="position:fixed; inset:0; background:#fff; display:flex; align-items:center; justify-content:center;">
+          <div style="max-width:900px; text-align:center; font-size:28px; line-height:1.35; color:#111; padding:24px;">
+            <h3 style="margin:0 0 14px 0;">Local dev mode</h3>
+            <p style="margin:0;">CHS Exit Survey runs only on a Lookit study URL. Press Continue to proceed.</p>
+          </div>
+        </div>
+      `,
+      choices: ["Continue"],
+      on_load: () => {
+        try {
+          stopAudio();
+        } catch {}
+      }
+    };
+
+// ---------------- DEBRIEF (after lookitExitSurvey) ----------------
+const debrief = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: `
+    <div style="position:fixed; inset:0; background:#fff; overflow:auto;">
+      <div style="max-width:980px; margin:0 auto; padding:24px 24px 110px 24px; box-sizing:border-box;">
+        <div style="text-align:left;">
+          <h2 style="font-size:36px; line-height:1.3; margin:10px 0 12px 0;">
+            <b>Thank you for participating!</b>
+          </h2>
+
+          <h2 style="font-size:36px; line-height:1.3; margin:10px 0 12px 0;">
+            Some background information
+          </h2>
+
+          <p style="font-size:22px; line-height:1.35; margin:0 0 18px 0;">
+            One of the fundamental skills underlying counting is the ability to match quantities exactly through a process called one-to-one correspondence. Previous research (Gordon, 2004; Schneider et al., 2022) using matching tasks showed that participants of all ages performed more accurately in one-to-one correspondence tasks when they were also proficient in counting. Here, we asked whether children show any understanding of exact quantity intuitively in their drawings, or if children need to be able to count in order to understand exact quantity. The drawings of sea creatures all include numerical values, like 8 legs for an octopus or 5 legs for a starfish. How many limbs, eyes, or other elements in the drawing that have numerical values will give us more insight into how children learn to count.
+          </p>
+
+          <h2 style="font-size:36px; line-height:1.3; margin:10px 0 12px 0;">
+            Compensation
+          </h2>
+
+          <p style="font-size:22px; line-height:1.35; margin:0 0 18px 0;">
+            To thank you for your participation, we'll be emailing you a $5 Amazon gift card - this should arrive in your email inbox within the next week after we confirm your consent video and check that your child is in the age range for this study (If you don't hear from us by then, feel free to reach out!). If you participate again with another child in the age range, you'll receive one gift card per child.
+          </p>
+
+          <h2 style="font-size:36px; line-height:1.3; margin:10px 0 12px 0;">
+            Questions or concerns
+          </h2>
+
+          <p style="font-size:22px; line-height:1.35; margin:0 0 18px 0;">
+            In case of questions or concerns, please do not hesitate to contact us at child.research@psych.rutgers.edu
+          </p>
+        </div>
+      </div>
+
+      <!-- custom visible button -->
+      <div style="
+        position:fixed;
+        left:0; right:0; bottom:0;
+        background:rgba(255,255,255,0.96);
+        border-top:1px solid #ddd;
+        padding:14px 16px;
+        display:flex;
+        justify-content:center;
+        z-index:99999;
+      ">
+        <button id="debrief-complete-btn" type="button" style="
+          font-size:22px;
+          padding:12px 28px;
+          border-radius:10px;
+          border:1px solid #888;
+          background:#f5f5f5;
+          cursor:pointer;
+        ">
+          Complete
+        </button>
+      </div>
+    </div>
+  `,
+  choices: [], // no jsPsych-generated buttons
+  extensions: recExt,
+  on_load: function () {
+    // Stop any leftover audio completely
+    try {
+      stopAudio();
+      const a = audio();
+      a.pause();
+      a.currentTime = 0;
+      a.src = "";
+      a.onended = null;
+      a.onerror = null;
+    } catch {}
+
+    const btn = document.getElementById('debrief-complete-btn');
+    if (btn) {
+      let done = false;
+
+      const endStudy = () => {
+        if (done) return;
+        done = true;
+
+        btn.disabled = true;
+        btn.textContent = "Completing...";
+        btn.style.opacity = "0.85";
+        btn.style.cursor = "default";
+
+        // Finish this trial first
+        jsPsych.finishTrial({ debrief_complete: true });
+
+        // Then redirect (CHS usually handles this, but this forces it)
+        setTimeout(() => {
+          window.location.href = "https://childrenhelpingscience.com/studies/history/";
+        }, 150);
+      };
+
+      btn.addEventListener('click', endStudy);
+      btn.addEventListener(
+        'touchend',
+        function (e) {
+          e.preventDefault();
+          endStudy();
+        },
+        { passive: false }
+      );
+    }
+  },
+  on_finish: function () {
+    try { stopAudio(); } catch {}
+  }
+};
+// ---- FIXED INTRO (only SL1 + A_INTRO) ----
+const intro_first = [ audioImageAuto(SL1, A_INTRO) ];
+
+// ---- PART 1: what's on this card and parent child interaction ----
+const part1_pkg = [
+audioImageAuto(SL1, A_INTRO), //instructions for WOC "This is XX. XX wants to learn more about numbers. Can you show her how to count?"
+  audioImageAuto(SL1, WOC_INTRO), //instructions for WOC "This is XX. XX wants to learn more about numbers. Can you show her how to count?"
+  ...WOC_block,
+    audioImageAuto(SL4, PIC_INTRO), //instructions for parent child interaction; "thank you for helping XX! next, you and your parent will work together to describe what you see on a picture"
+  ...PIC_block,
+  audioImageAuto(SL50, P_END) //transition; "thank you both! now XX knows a lot more about numbers, thanks to you! "
+];
+
+// ---- PART 2:  ----
+const part2_pkg = [
+  audioImageAuto(SL1, GNG_I_1),
+  ...GOnGO_block  //replace with go no go; put keyboard instructions here
+];
+
+
+// ---- PART 3:  ----
+const part3_pkg = [
+  audioImageAuto(SL50, A_GIVN),
+  ...GIVN_block
+];
+
+// ---- BREAK (always between the randomized halves) ----
+const break_pkg = [ audioImageWithNext(SL40, A_BREAK) ];
+
+// ---- CLOSING (starts at SL51 now) ----
+const closing_pkg = [
+    audioImageAuto(SL53, A_NEWOUT),
+    imageWithTimedNext(QUAL_IMG, 15000)
+];
+
+// ---- RANDOMIZE PART 1 vs PART 2 ORDER ----
+const halves = jsPsych.randomization.shuffle([part1_pkg, part2_pkg]);
+
+// ---- FINAL TIMELINE ----
+const timeline = [
+    // videoConfig,
+    // videoConsent,
+    // preSurveyPage1,
+    // preSurveyPage2,
+    // survey_trial,
+  preload,
+  preloadFallback,
+//startTrialsRec,
+    chooseStudySessionTrial,
+   ...part1_pkg,     //
+   ...part2_pkg,     // the other Part
+  ...part3_pkg,
+//    stopTrialsRec,
+      audioImageAuto(SL53, A_NEWOUT),
+  lookitExitSurvey
+];
+
+jsPsych.run(timeline);
