@@ -264,7 +264,7 @@ function fullImageScaffoldW(imgURL, opts={}){
   const textOverlay = text ? `<div style="position:absolute; top:90%; left:50%; transform:translateX(-50%); z-index:10; background:rgba(0,0,0,.65); color:#fff; padding:14px 20px; border-radius:10px; font-size:clamp(12px, 1.9vw, 16px); text-align:center; max-width:90%;">${text}</div>` : '';
   return `
     <div style="position:fixed; inset:0; background:${bg}; overflow:hidden;">
-      <img src="${imgURL}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; ${extraImg}">
+      <img src="${imgURL}" style="position:absolute; inset:0; width:90%; height:90%; object-fit:cover; object-position:top; ${extraImg}">
       ${textOverlay}
       <div id="btn-slot" style="position:absolute; ${pos}"></div>
     </div>
@@ -314,7 +314,7 @@ function audioImageWithNext(imgURL, audioURL, {btn=NEXT_BTN, btnPos, postDelayMs
 function audioImageWithNextLong(imgURL, audioURL, {btn=NEXT_BTN, btnPos, postDelayMs=0, record=true, tag=null, text=null}={}){
   return {
     type: jsPsychHtmlButtonResponse,
-    stimulus: () => fullImageScaffoldW((typeof imgURL === 'function' ? imgURL() : imgURL), { pos: btnPos, text: text }),
+    stimulus: fullImageScaffoldW(imgURL, { pos: btnPos, text: text }),
     choices: [],
     data: { trial_tag: tag },
     extensions: record ? recExt : undefined,
@@ -885,20 +885,22 @@ window.clearStudySessionDebugOverride = function() {
 applyCurrentSessionAssets();
 
 // ---------------- ASSETS ----------------
-const SETUP = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/setup.jpeg";
+const SETUP = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/setup.png";
 
 const A_SETUP = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/parent_sit.mp3";
 const WOC_INTRO = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_intro.mp3";
+const WOC_INTROA = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_introA.mp3";
+
 const HowMany = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_howmany.mp3"; //"How many? Can you count?";
 
-const GO_C = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_go_correct.mp3";
-const GO_W = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_go_wrong.mp3";
-const NOGO_C = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_nogo_correct.mp3";
-const NOGO_W = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_nogo_wrong.mp3";
+const GO_C = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/go_correct.mp3";
+const GO_W = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/go_wrong.mp3";
+const NOGO_C = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/nogo_correct.mp3";
+const NOGO_W = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/nogo_wrong.mp3";
 
 
-const PIC_INTRO = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_story1.mp3";  //"thank you for helping Momo! next, you and your parent will work together to show Momo what you see on a page from a book."
-const WhatPic = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/storybook2.m4a"; //"Wow, so much to talk about!"
+const PIC_INTRO = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/storybook1.mp3";  //"thank you for helping Momo! next, you and your parent will work together to show Momo what you see on a page from a book."
+const WhatPic = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/storybook2.mp3"; //"Wow, so much to talk about!"
 const P_END  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_thankyou.mp3"; // "thank you both! now Momo knows a lot more about numbers, thanks to you! "
 
 
@@ -922,6 +924,37 @@ const A_GIVN8  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads
 const A_GIVN9  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_9.mp3";
 const A_GIVN10  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_10.mp3";
 
+const A_cousin1 = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin1.mp3";
+const A_cousin1A = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin1A.mp3";
+const A_cousin1B = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin1B.mp3";
+const A_cousin1C = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin1C.mp3";
+const A_cousin1D = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin1D.mp3";
+const A_cousin2 = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin2.mp3";
+const A_cousin2A = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin2A.mp3";
+const A_cousin2B = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin2B.mp3";
+const A_cousin2C = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin2C.mp3";
+const A_cousin2D = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin2D.mp3";
+const A_cousin2E = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin2E.mp3";
+const A_cousin3 = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin3.mp3";
+const A_cousin3B = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin3B.mp3";
+const A_cousin4 = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin4.mp3";
+
+
+const cousin1A = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/cousin1A.png";
+const cousin1B = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/cousin1B.png";
+const cousin1C = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/cousin1C.png";
+const cousin2 = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/cousin2.png";
+const cousin2A = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/cousin2A.png";
+const cousin2B = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/cousin2B.png";
+const cousin2C = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/cousin2C.png";
+const cousin2D = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/cousin2D.png";
+const cousin2E = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/cousin2E.png";
+const cousin3 = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/cousin3.png";
+const cousin3B = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/cousin3B.png";
+
+
+
+
 const GIVN_AMOUNT_BY_AUDIO = {
   [A_GIVN1]: 1,
   [A_GIVN2]: 2,
@@ -937,18 +970,7 @@ const GIVN_AMOUNT_BY_AUDIO = {
 
 
 
-const GNG_I_1 = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin1.m4a";  //"Momo also brought some games to play with you. "
-const GNG_I_2  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_cousin2.mp3"; //"This is Momos tablet. Sometimes a picture of her cousin shows up,
-const GNG_I_2T  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin2T.m4a"; //and you should tap spacebar to move the turtle toy down to the gray shopping cart for her cousin."
-const GNG_I_2K  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_cousin2K.mp3"; //and you should tap spacebar to move the turtle toy down to the gray shopping cart for her cousin."
-const GNG_I_2B  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin2B.m4a"; //"This is Momos tablet. Sometimes a picture of her cousin shows up, and you should tap spacebar to move the turtle toy down to the gray shopping cart for her cousin."
-
-const GNG_I_3  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_cousin3.mp3"; //"Other times, no cousin shows up at all. When there is no cousin, you should not tap the spacebar at all. Just leave the turtle on the shelf."
-const GNG_I_3B  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/cousin3B.m4a"; //"Other times, no cousin shows up at all. When there is no cousin, you should not tap the spacebar at all. Just leave the turtle on the shelf."
-
 const POOF  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/POOF.mp3"; // poof sound to indicate trial boundary
-const GNG_1  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_cousin4.mp3"; //"Remember, only tap to move the turtle toy when you see a cousin! Do not tap anything when there is no cousin!"
-
 
 // original from luna study
 const SL1      = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/Slide1.png";
@@ -1013,14 +1035,14 @@ const QUAL_IMG = RAW("1e9cc8e8d29eadbc7679e9f1da87d896bc881328","qualtricsform.p
 const SL53     = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/images/Slide5.png";
 const A_HCEND  = RAW("239bb2631a377401fe888f3e002960a186c14f0a","HC_end.m4a");
 
-const A_GIVN   = RAW("5a6377d9f544169648207be96d49b49e6ee22030","given_intro.m4a");
+const A_GIVN   = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/given_intro.mp3";//= RAW("5a6377d9f544169648207be96d49b49e6ee22030","given_intro.m4a");
 const A_NSPBR  = RAW("5a6377d9f544169648207be96d49b49e6ee22030","given_spacebar.m4a");
 
 
 const WHL      = RAW("5a6377d9f544169648207be96d49b49e6ee22030","whale.png");
 const GLDFSH   = RAW("5a6377d9f544169648207be96d49b49e6ee22030","goldfish.png");
 const SMLMO    = RAW("5a6377d9f544169648207be96d49b49e6ee22030","momosmall.png");
-const A_NEWOUT = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/outro.mp3"; //RAW("5a6377d9f544169648207be96d49b49e6ee22030","newoutro.m4a")
+const A_NEWOUT = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/A_NEWOUT.mp3"; //RAW("5a6377d9f544169648207be96d49b49e6ee22030","newoutro.m4a")
 const SL66     = RAW("e2f4d349a7daf6210134be08cb662552fce77b41","slide 66.png")
 
 const KEYB7    = RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard_7.png");
@@ -1031,8 +1053,8 @@ const A_KEYB2  = RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard2 (1).m
 const A_KEYB3  = RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard3 (1).m4a")
 const A_KEYB4  = RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard4 (1).m4a")
 const A_KEYB5  = RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard5 (1).m4a")
-const A_KEYB6  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_key3.mp3";//= RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard6 (1).m4a")
-const A_KEYB7  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/momo_key4.mp3";//= RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard7 (1).m4a")
+const A_KEYB6  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/given_q.mp3";//= RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard6 (1).m4a")
+const A_KEYB7  = "https://raw.githubusercontent.com/RUCALC/CountAgain/refs/heads/dev-build/mp3/given_r.mp3";//= RAW("ce8a380a8c238d8a785fc21d27e6130a63311511","keyboard7 (1).m4a")
 
 const KEYB11   = RAW("aa3c1e3e96cb6355b9b0398dd29c34abf62db45f","keyb1.png")
 const KEYB21   = RAW("18480f74837f722df585f4158a323fc7bd01ecd8","key2.png")
@@ -1053,6 +1075,7 @@ const preload_images = [
   G3, G3_BW, G4, G4_BW, G5, G5_BW, G6, G6_BW, SETUP,
   COUSIN1, COUSIN2, COUSIN3, COUSIN4, COUSIN5, COUSIN6, COUSIN7, TURT,
 PIC_1, WOC_1, WOC_2, WOC_3, WOC_4,WOC_5,
+cousin1A, cousin1B, cousin1C, cousin2, cousin2A, cousin2B, cousin2C, cousin2D, cousin2E, cousin3, cousin3B,
   SL38, SL40, SL39, COUSIN, SL_KEYBD, SL50, SL51, SL52, SL53, QUAL_IMG,
   NEXT_BTN, READY_BTN, YES_BTN, NO_BTN, TRY_BTN,
   WHL, GLDFSH, PENG, SMLMO,
@@ -1065,7 +1088,8 @@ const preload = {
   images: preload_images,
   audio: [
     A_SETUP, A_INTRO, A_DSTART, A_OHNO, A_KNOWS, A_LINE, A_DOT, A_NICE, A_HM, A_BUB, A_TURT, A_JELLY, A_STAR, A_END, A_BREAK,
-    WOC_INTRO, HowMany, PIC_INTRO, WhatPic, P_END, GNG_I_1, GNG_I_2, GNG_I_2T, GNG_I_2B, GNG_I_3, GNG_I_3B, POOF, GNG_1,
+    WOC_INTRO, WOC_INTROA, HowMany, PIC_INTRO, WhatPic, P_END, POOF,
+    A_cousin1, A_cousin1A, A_cousin1B, A_cousin1C, A_cousin1D, A_cousin2, A_cousin2A, A_cousin2B, A_cousin2C, A_cousin2D, A_cousin2E, A_cousin3, A_cousin3B, A_cousin4,
 A_GIVN1, A_GIVN2, A_GIVN3, A_GIVN4, A_GIVN5, A_GIVN6, A_GIVN7, A_GIVN8, A_GIVN9, A_GIVN10,
     A_MINTR, A_MCOUS, A_MINSTR1, A_MINSTR, A_MLETS, A_MDIREC, A_MEND, A_HCIN, A_HCCNT, A_HCEND, A_KEYB1, A_KEYB2, A_KEYB3, A_KEYB4, A_KEYB5, A_KEYB6, A_KEYB7, selectSFX().src
   ],
@@ -1101,15 +1125,15 @@ const preloadFallback = {
   on_finish: function() {
     if (failedSessionAssets.size > 0) {
       console.log(`Session1 fallback complete. Setting up URL redirection for ${failedSessionAssets.size} assets.`);
-      
+
       // Override the Image constructor to automatically redirect failed URLs to session1 versions
       const OriginalImage = window.Image;
       const descriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
       const originalSetter = descriptor.set;
-      
+
       window.Image = function(...args) {
         const img = new OriginalImage(...args);
-        
+
         Object.defineProperty(img, 'src', {
           get: descriptor.get,
           set: function(value) {
@@ -1125,10 +1149,10 @@ const preloadFallback = {
           configurable: true,
           enumerable: true
         });
-        
+
         return img;
       };
-      
+
       // Preserve prototype chain
       Object.setPrototypeOf(window.Image, OriginalImage);
       Object.setPrototypeOf(window.Image.prototype, OriginalImage.prototype);
@@ -1177,9 +1201,9 @@ const chooseStudySessionTrial = {
   type: jsPsychSurveyText,
   preamble: `
     <div style="max-width:820px; margin:0 auto; text-align:left; line-height:1.4;">
-      <h2 style="margin:0 0 10px 0;">Choose Study Session</h2>
-      <p style="margin:0 0 8px 0;">Enter the session number you want to run (for example: 1, 2, 3...).</p>
-      <p style="margin:0; color:#444;">If left blank or invalid, the current session value will be kept.</p>
+      <h2 style="margin:0 0 10px 0;">Which session are you on? Please put in a single number between 1 and 3.</h2>
+      <p style="margin:0 0 8px 0;">If you are not sure which session you should be on for today, please feel free to contact us! </p>
+      <p style="margin:0; color:#444;">If you have not restarted any session in the past, feel free to leave it blank.</p>
     </div>
   `,
   button_label: "Continue",
@@ -1212,11 +1236,9 @@ audioImageWithNextLong(SETUP, A_SETUP, {text: "Parent: please take a moment to s
   audioImageWithNextLong(() => WOC_5, HowMany, {text: "Parent: please click the Next button when your child finishes counting. If your child does not respond right away, please feel free to repeat the instruction for them.", postDelayMs: 5000}), //audio: ""
 //add more trials potentially, or not lol
 ];
-
 const PIC_block = [
 audioImageWithNextLong(() => PIC_1, WhatPic, {text: "Parent: please talk with your child as much as you can. Please click the Next button when it shows up.", postDelayMs: 180000}) //audio: maybe no audio??
 ];
-
 
 // Part B
 
@@ -1234,16 +1256,7 @@ const cousinKeyboardInstruction = [
     audioImageAuto(KEYB41, A_KEYB7)
 ];
 
-const GOnGOKeyboardInstruction = [
-    audioImageAuto(KEYB11, A_KEYB1), //towel
-    audioImageAuto(COUSIN_HC, GNG_I_2), //whole task - needs to break down into showing shelf etc.
-    audioImageAuto(COUSIN_HT, GNG_I_2T), //whole task - needs to break down into showing shelf etc.
-    audioImageAuto(KEYB21, GNG_I_2K), //spacebar
-    audioImageAuto(COUSIN_HB, GNG_I_2B), //whole task - needs to break down into showing shelf etc.
-    audioImageAuto(COUSIN_T, GNG_I_3),
-    audioImageAuto(COUSIN_T, GNG_I_3B), //no tap
-    audioImageAuto(KEYB31, A_KEYB6)
-];
+
 
 const DROP_PLACEMENT_DEFAULTS = {
   leftOverhangPx: 70,
@@ -1884,7 +1897,7 @@ function cousinAudioPenguins(bg, audioURL, { tag = "penguin_UNTAGGED" } = {}) {
   let _onKey = null;
   const givnAmount = GIVN_AMOUNT_BY_AUDIO[audioURL];
   const givnReminder = Number.isFinite(givnAmount)
-    ? `<div style="font-size:18px; background:rgba(0,0,0,.55); color:#fff; padding:12px 16px; border-radius:10px; text-align:center;">can you give ${givnAmount}?</div>`
+    ? `<div style="font-size:18px; background:rgba(0,0,0,.55); color:#fff; padding:12px 16px; border-radius:10px; text-align:center;">Can you move ${givnAmount}?</div>`
     : "";
   return {
     type: jsPsychHtmlButtonResponse,
@@ -1976,13 +1989,27 @@ function cousinAudioPenguins(bg, audioURL, { tag = "penguin_UNTAGGED" } = {}) {
   };
 }
 
+const GOnGOKeyboardInstruction = [
+    audioImageAuto(cousin2, A_cousin2), //ready
+    audioImageAuto(cousin2A, A_cousin2A), //whole task - needs to break down into showing shelf etc.
+    audioImageAuto(cousin2B, A_cousin2B), //whole task - needs to break down into showing shelf etc.
+    audioImageAuto(cousin2C, A_cousin2C), //spacebar
+    audioImageAuto(cousin2D, A_cousin2D), //whole task - needs to break down into showing shelf etc.
+    audioImageAuto(cousin2E, A_cousin2E),
+    audioImageAuto(cousin3, A_cousin3), //no tap
+    audioImageAuto(cousin3B, A_cousin3B)
+];
+
 const GOnGO_block = [
   // keyboard instructions
+      audioImageWithNext(cousin1A, A_cousin1A), //keyboard
+      audioImageWithNext(cousin1B, A_cousin1B), //towel
+      audioImageWithNext(cousin1C, A_cousin1C), //spacebar
+  cousinAudioPracticeGoldfish(SL66, A_cousin1D),
   GOnGOKeyboardInstruction,
-  cousinAudioPracticeGoldfish(SL66, A_NSPBR),
 
   // instructions for go no go - only give toys to cousin X, but not Y etc.need to add timing component
-  readyInstructionAudio(`<h3>Remember, only tap to move the turtle toy when you see somebody! Do not tap anything when there is nobody!</h3>`, GNG_1),
+  readyInstructionAudio(`<h3>Remember, only tap to move the turtle toy when you see somebody! Do not tap anything when there is nobody!</h3>`, A_cousin4),
 
   // Practice (repeat until correct): C, BG, C, BG
   goNoGoPracticeWithFeedback({
@@ -2023,10 +2050,8 @@ const GOnGO_block = [
 
 
 const GIVNKeyboardInstruction = [
-    audioImageAuto(KEYB11, A_KEYB1), //towel
-    audioImageAuto(KEYB21, GNG_I_2K), //spacebar
-    audioImageAuto(KEYB31, A_KEYB6),
-    audioImageAuto(KEYB41, A_KEYB7)
+    audioImageWithNext(KEYB31, A_KEYB6),
+    audioImageWithNext(KEYB41, A_KEYB7)
 ];
 
 // Cousins sequence per instructions:
@@ -2218,24 +2243,26 @@ const intro_first = [ audioImageAuto(SL1, A_INTRO) ];
 
 // ---- PART 1: what's on this card and parent child interaction ----
 const part1_pkg = [
-audioImageAuto(SL1, A_INTRO), //instructions for WOC "This is XX. XX wants to learn more about numbers. Can you show her how to count?"
-  audioImageAuto(SL1, WOC_INTRO), //instructions for WOC "This is XX. XX wants to learn more about numbers. Can you show her how to count?"
+audioImageWithNext(SL1, WOC_INTRO), //instructions for WOC "This is XX. XX wants to learn more about numbers. Can you show her how to count?"
+audioImageWithNextLong(SETUP, A_SETUP, {text: "Parent: please take a moment to sit behind your child. This is because your child is learning from you all the time, and may pick up on even very small cues about what you think.", postDelayMs: 5000}),
+audioImageWithNext(SL50, WOC_INTROA), //instructions for WOC "This is XX. XX wants to learn more about numbers. Can you show her how to count?"
   ...WOC_block,
-    audioImageAuto(SL4, PIC_INTRO), //instructions for parent child interaction; "thank you for helping XX! next, you and your parent will work together to describe what you see on a picture"
+    audioImageWithNext(SL4, PIC_INTRO), //instructions for parent child interaction; "thank you for helping XX! next, you and your parent will work together to describe what you see on a picture"
   ...PIC_block,
-  audioImageAuto(SL50, P_END) //transition; "thank you both! now XX knows a lot more about numbers, thanks to you! "
+  audioImageWithNext(SL50, P_END) //transition; "thank you both! now XX knows a lot more about numbers, thanks to you! "
 ];
 
 // ---- PART 2:  ----
 const part2_pkg = [
-  audioImageAuto(SL1, GNG_I_1),
-  ...GOnGO_block  //replace with go no go; put keyboard instructions here
+  audioImageWithNext(SL1, A_cousin1),
+  ...GOnGO_block,  //replace with go no go; put keyboard instructions here
+    audioImageWithNext(SL50, P_END) //transition; "thank you both! now XX knows a lot more about numbers, thanks to you! "
 ];
 
 
 // ---- PART 3:  ----
 const part3_pkg = [
-  audioImageAuto(SL50, A_GIVN),
+  audioImageWithNext(SL1, A_GIVN),
   ...GIVN_block
 ];
 
@@ -2253,19 +2280,19 @@ const halves = jsPsych.randomization.shuffle([part1_pkg, part2_pkg]);
 
 // ---- FINAL TIMELINE ----
 const timeline = [
-    // videoConfig,
-    // videoConsent,
-    // preSurveyPage1,
-    // preSurveyPage2,
-    // survey_trial,
+//     videoConfig,
+//     videoConsent,
+ //    preSurveyPage1,
+  //   preSurveyPage2,
+  //   survey_trial,
   preload,
   preloadFallback,
-//startTrialsRec,
-    chooseStudySessionTrial,
+           chooseStudySessionTrial,
+startTrialsRec,
    ...part1_pkg,     //
    ...part2_pkg,     // the other Part
   ...part3_pkg,
-//    stopTrialsRec,
+    stopTrialsRec,
       audioImageAuto(SL53, A_NEWOUT),
   lookitExitSurvey
 ];
